@@ -11,3 +11,4 @@
 9. Department/Shift Boundaries  
 10. Special Room Allocation  
 11. Semester-Specific Shift Rule
+12. try new
