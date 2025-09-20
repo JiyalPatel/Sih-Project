@@ -1,0 +1,183 @@
+{
+  "batches": [
+    {
+      "_comment": "Semester 3 Lecture Batches",
+      "id": "B3A",
+      "name": "IT Sem 3 - Section A",
+      "semester": 3,
+      "strength": 60,
+      "subjects": ["IT101", "IT102"]
+    },
+    {
+      "id": "B3B",
+      "name": "IT Sem 3 - Section B",
+      "semester": 3,
+      "strength": 55,
+      "subjects": ["IT101", "IT102"]
+    },
+
+    {
+      "_comment": "Semester 3 Lab Sub-Batches (DBMS Lab) - single block assignment",
+      "id": "B3A_LAB1",
+      "name": "IT Sem 3 - Section A - DBMS Lab 1",
+      "semester": 3,
+      "strength": 30,
+      "parent_batch": "B3A",
+      "subjects": ["IT103"],
+      "lab_slot": "fixed_lab_slot"
+    },
+    {
+      "id": "B3A_LAB2",
+      "name": "IT Sem 3 - Section A - DBMS Lab 2",
+      "semester": 3,
+      "strength": 30,
+      "parent_batch": "B3A",
+      "subjects": ["IT103"],
+      "lab_slot": "fixed_lab_slot"
+    },
+    {
+      "id": "B3B_LAB1",
+      "name": "IT Sem 3 - Section B - DBMS Lab 1",
+      "semester": 3,
+      "strength": 28,
+      "parent_batch": "B3B",
+      "subjects": ["IT103"],
+      "lab_slot": "fixed_lab_slot"
+    },
+    {
+      "id": "B3B_LAB2",
+      "name": "IT Sem 3 - Section B - DBMS Lab 2",
+      "semester": 3,
+      "strength": 27,
+      "parent_batch": "B3B",
+      "subjects": ["IT103"],
+      "lab_slot": "fixed_lab_slot"
+    },
+
+    {
+      "_comment": "Semester 5 Lecture Batches",
+      "id": "B5A",
+      "name": "IT Sem 5 - Section A",
+      "semester": 5,
+      "strength": 65,
+      "subjects": ["IT104", "IT106"]
+    },
+    {
+      "id": "B5B",
+      "name": "IT Sem 5 - Section B",
+      "semester": 5,
+      "strength": 58,
+      "subjects": ["IT104", "IT106"]
+    },
+
+    {
+      "_comment": "Semester 5 Lab Sub-Batches (Networks & OS Labs) - single block assignment",
+      "id": "B5A_LAB1",
+      "name": "IT Sem 5 - Section A - Networks Lab 1",
+      "semester": 5,
+      "strength": 32,
+      "parent_batch": "B5A",
+      "subjects": ["IT105"],
+      "lab_slot": "fixed_lab_slot"
+    },
+    {
+      "id": "B5A_LAB2",
+      "name": "IT Sem 5 - Section A - Networks Lab 2",
+      "semester": 5,
+      "strength": 33,
+      "parent_batch": "B5A",
+      "subjects": ["IT105"],
+      "lab_slot": "fixed_lab_slot"
+    },
+    {
+      "id": "B5A_LAB3",
+      "name": "IT Sem 5 - Section A - OS Lab",
+      "semester": 5,
+      "strength": 33,
+      "parent_batch": "B5A",
+      "subjects": ["IT107"],
+      "lab_slot": "fixed_lab_slot"
+    },
+    {
+      "id": "B5B_LAB1",
+      "name": "IT Sem 5 - Section B - Networks Lab 1",
+      "semester": 5,
+      "strength": 29,
+      "parent_batch": "B5B",
+      "subjects": ["IT105"],
+      "lab_slot": "fixed_lab_slot"
+    },
+    {
+      "id": "B5B_LAB2",
+      "name": "IT Sem 5 - Section B - Networks Lab 2",
+      "semester": 5,
+      "strength": 29,
+      "parent_batch": "B5B",
+      "subjects": ["IT105"],
+      "lab_slot": "fixed_lab_slot"
+    },
+    {
+      "id": "B5B_LAB3",
+      "name": "IT Sem 5 - Section B - OS Lab",
+      "semester": 5,
+      "strength": 29,
+      "parent_batch": "B5B",
+      "subjects": ["IT107"],
+      "lab_slot": "fixed_lab_slot"
+    },
+
+    {
+      "_comment": "Semester 7 Lecture Batches",
+      "id": "B7A",
+      "name": "IT Sem 7 - Section A",
+      "semester": 7,
+      "strength": 62,
+      "subjects": ["IT108", "IT110"]
+    },
+    {
+      "id": "B7B",
+      "name": "IT Sem 7 - Section B",
+      "semester": 7,
+      "strength": 60,
+      "subjects": ["IT108", "IT110"]
+    },
+
+    {
+      "_comment": "Semester 7 Lab Sub-Batches (ML Lab) - single block assignment",
+      "id": "B7A_LAB1",
+      "name": "IT Sem 7 - Section A - ML Lab 1",
+      "semester": 7,
+      "strength": 31,
+      "parent_batch": "B7A",
+      "subjects": ["IT109"],
+      "lab_slot": "fixed_lab_slot"
+    },
+    {
+      "id": "B7A_LAB2",
+      "name": "IT Sem 7 - Section A - ML Lab 2",
+      "semester": 7,
+      "strength": 31,
+      "parent_batch": "B7A",
+      "subjects": ["IT109"],
+      "lab_slot": "fixed_lab_slot"
+    },
+    {
+      "id": "B7B_LAB1",
+      "name": "IT Sem 7 - Section B - ML Lab 1",
+      "semester": 7,
+      "strength": 30,
+      "parent_batch": "B7B",
+      "subjects": ["IT109"],
+      "lab_slot": "fixed_lab_slot"
+    },
+    {
+      "id": "B7B_LAB2",
+      "name": "IT Sem 7 - Section B - ML Lab 2",
+      "semester": 7,
+      "strength": 30,
+      "parent_batch": "B7B",
+      "subjects": ["IT109"],
+      "lab_slot": "fixed_lab_slot"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "classrooms": [
+    {
+      "id": "C101",
+      "name": "Lecture Hall 1",
+      "type": "lecture",
+      "capacity": 80,
+      "available_days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+      "available_slots": ["1", "2", "3", "4", "5"]
+    },
+    {
+      "id": "C102",
+      "name": "Lecture Hall 2",
+      "type": "lecture",
+      "capacity": 60,
+      "available_days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+      "available_slots": ["1", "2", "3", "4", "5"]
+    },
+    {
+      "id": "L201",
+      "name": "DBMS Lab",
+      "type": "lab",
+      "capacity": 40,
+      "available_days": ["Tue", "Wed", "Fri"],
+      "available_slots": ["4", "5"]  
+    },
+    {
+      "id": "L202",
+      "name": "Networks Lab",
+      "type": "lab",
+      "capacity": 40,
+      "available_days": ["Mon", "Tue", "Thu"],
+      "available_slots": ["3", "4"]  
+    },
+    {
+      "id": "L203",
+      "name": "Operating Systems Lab",
+      "type": "lab",
+      "capacity": 40,
+      "available_days": ["Tue", "Wed", "Fri"],
+      "available_slots": ["3", "4"]  
+    },
+    {
+      "id": "L204",
+      "name": "AI & ML Lab",
+      "type": "lab",
+      "capacity": 40,
+      "available_days": ["Mon", "Thu"],
+      "available_slots": ["2", "3", "4"]  
+    }
+  ]
+}

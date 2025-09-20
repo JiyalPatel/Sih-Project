@@ -1,0 +1,100 @@
+{
+  "subjects": [
+    {
+      "id": "IT101",
+      "name": "Data Structures and Algorithms",
+      "type": "theory",
+      "credits": 4,
+      "semester": 3,
+      "hours_per_week": 3,
+      "preferred_days": ["Mon", "Wed", "Fri"],
+      "preferred_slots": ["1", "2", "3"]
+    },
+    {
+      "id": "IT102",
+      "name": "Database Management Systems",
+      "type": "theory",
+      "credits": 4,
+      "semester": 3,
+      "hours_per_week": 3,
+      "preferred_days": ["Tue", "Thu"],
+      "preferred_slots": ["1", "2", "3"]
+    },
+    {
+      "id": "IT103",
+      "name": "Database Management Systems Lab",
+      "type": "lab",
+      "credits": 1,
+      "semester": 3,
+      "hours_per_week": 2,
+      "lab_slot": "fixed_lab_slot"
+    },
+    {
+      "id": "IT104",
+      "name": "Computer Networks",
+      "type": "theory",
+      "credits": 4,
+      "semester": 5,
+      "hours_per_week": 3,
+      "preferred_days": ["Mon", "Thu"],
+      "preferred_slots": ["1", "2", "3", "4"]
+    },
+    {
+      "id": "IT105",
+      "name": "Computer Networks Lab",
+      "type": "lab",
+      "credits": 1,
+      "semester": 5,
+      "hours_per_week": 2,
+      "lab_slot": "fixed_lab_slot"
+    },
+    {
+      "id": "IT106",
+      "name": "Operating Systems",
+      "type": "theory",
+      "credits": 4,
+      "semester": 5,
+      "hours_per_week": 3,
+      "preferred_days": ["Tue", "Fri"],
+      "preferred_slots": ["1", "2", "3", "4"]
+    },
+    {
+      "id": "IT107",
+      "name": "Operating Systems Lab",
+      "type": "lab",
+      "credits": 1,
+      "semester": 5,
+      "hours_per_week": 2,
+      "lab_slot": "fixed_lab_slot"
+    },
+    {
+      "id": "IT108",
+      "name": "Artificial Intelligence",
+      "type": "theory",
+      "credits": 4,
+      "semester": 7,
+      "hours_per_week": 3,
+      "preferred_days": ["Mon", "Wed"],
+      "preferred_slots": ["1", "2", "3", "4"]
+    },
+    {
+      "id": "IT109",
+      "name": "Machine Learning Lab",
+      "type": "lab",
+      "credits": 1,
+      "semester": 7,
+      "hours_per_week": 2,
+      "lab_slot": "fixed_lab_slot"
+    },
+    {
+      "id": "IT110",
+      "name": "Software Engineering",
+      "type": "theory",
+      "credits": 3,
+      "semester": 7,
+      "hours_per_week": 3,
+      "preferred_days": ["Tue", "Thu"],
+      "preferred_slots": ["1", "2", "3", "4"]
+    }
+  ]
+}

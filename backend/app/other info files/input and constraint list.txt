@@ -1,0 +1,70 @@
+Inputs (Raw Data to Provide)
+
+1. **Faculty Details**
+
+   * Faculty ID, Name
+   * Department
+   * Subjects they can teach
+   * Max hours/week (load capacity)
+   * Preferred slots (optional)
+   * Unavailable slots (leave, admin duty, etc.)
+
+2. **Subjects / Courses**
+
+   * Subject code & name
+   * Department / semester
+   * Type: Lecture / Lab / Tutorial
+   * Hours per week (e.g., 3 lectures + 1 lab)
+   * Number of sections needing this subject
+   * Faculty eligible to teach (link to faculty list)
+
+3. **Classrooms / Labs**
+
+   * Room ID & type (lecture hall, lab, seminar)
+   * Capacity (students it can hold)
+   * Special facilities (projector, computers, lab equipment)
+   * Availability (e.g., some labs only open certain hours)
+
+4. **Students / Sections**
+
+   * Section ID (e.g., CSE-3A)
+   * Department & semester
+   * Subjects required for that semester
+   * Strength (student count)
+
+5. **Timetable Structure**
+
+   * Working days (Mon–Fri, Mon–Sat)
+   * Periods per day (e.g., 6 or 8)
+   * Period duration (e.g., 1 hr)
+   * Breaks (lunch, short breaks)
+
+---
+
+##  Constraints (Rules to Follow)
+
+### Hard Constraints (must not be violated ❌)
+
+* A faculty cannot be in **two places at the same time**.
+* A room/lab cannot be assigned to **two classes at the same time**.
+* A section cannot attend **two subjects at the same time**.
+* Room capacity ≥ student strength.
+* Lab subjects must be in labs, lecture subjects in classrooms.
+* Subject hours/week must be satisfied.
+* Max hours/week per faculty cannot be exceeded.
+
+### Soft Constraints (preferences, can be relaxed ✅)
+
+* Faculty preferred time slots (e.g., no early mornings).
+* Balanced distribution of classes (avoid all on the same day).
+* Avoid long gaps in a section’s schedule.
+* Avoid overloading faculty (too many back-to-back classes).
+* Allocate core subjects in morning slots, electives later.
+* Try to minimize free periods for students/faculty.
+
+---
+
+So basically:
+
+* **Inputs = all the data** (faculty, subjects, sections, rooms, structure).
+* **Constraints = rules to respect while scheduling.**

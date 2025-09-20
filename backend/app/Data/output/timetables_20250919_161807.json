@@ -1,0 +1,271 @@
+{
+    "timetables": [
+        {
+            "timetable_id": "T1",
+            "rank": 1,
+            "score": 0,
+            "schedule": [
+                {
+                    "batch_id": "B3A",
+                    "subject_id": "IT101",
+                    "faculty_id": "F101",
+                    "room_id": "C101",
+                    "day": "Fri",
+                    "slots": [
+                        "1"
+                    ]
+                },
+                {
+                    "batch_id": "B3A",
+                    "subject_id": "IT102",
+                    "faculty_id": "F102",
+                    "room_id": "C101",
+                    "day": "Thu",
+                    "slots": [
+                        "1"
+                    ]
+                },
+                {
+                    "batch_id": "B3B",
+                    "subject_id": "IT101",
+                    "faculty_id": "F101",
+                    "room_id": "C101",
+                    "day": "Fri",
+                    "slots": [
+                        "2"
+                    ]
+                },
+                {
+                    "batch_id": "B3B",
+                    "subject_id": "IT102",
+                    "faculty_id": "F102",
+                    "room_id": "C101",
+                    "day": "Thu",
+                    "slots": [
+                        "2"
+                    ]
+                },
+                {
+                    "batch_id": "B3A_LAB1",
+                    "subject_id": "IT103",
+                    "faculty_id": "F103",
+                    "room_id": "L201",
+                    "day": "Fri",
+                    "slots": [
+                        "4"
+                    ]
+                },
+                {
+                    "batch_id": "B3A_LAB2",
+                    "subject_id": "IT103",
+                    "faculty_id": "F103",
+                    "room_id": "L201",
+                    "day": "Fri",
+                    "slots": [
+                        "5"
+                    ]
+                },
+                {
+                    "batch_id": "B3B_LAB1",
+                    "subject_id": "IT103",
+                    "faculty_id": "F103",
+                    "room_id": "L201",
+                    "day": "Tue",
+                    "slots": [
+                        "4"
+                    ]
+                },
+                {
+                    "batch_id": "B3B_LAB2",
+                    "subject_id": "IT103",
+                    "faculty_id": "F103",
+                    "room_id": "L201",
+                    "day": "Tue",
+                    "slots": [
+                        "5"
+                    ]
+                },
+                {
+                    "batch_id": "B5A",
+                    "subject_id": "IT104",
+                    "faculty_id": "F104",
+                    "room_id": "C101",
+                    "day": "Mon",
+                    "slots": [
+                        "1"
+                    ]
+                },
+                {
+                    "batch_id": "B5A",
+                    "subject_id": "IT106",
+                    "faculty_id": "F106",
+                    "room_id": "C101",
+                    "day": "Fri",
+                    "slots": [
+                        "3"
+                    ]
+                },
+                {
+                    "batch_id": "B5B",
+                    "subject_id": "IT104",
+                    "faculty_id": "F104",
+                    "room_id": "C101",
+                    "day": "Mon",
+                    "slots": [
+                        "2"
+                    ]
+                },
+                {
+                    "batch_id": "B5B",
+                    "subject_id": "IT106",
+                    "faculty_id": "F106",
+                    "room_id": "C101",
+                    "day": "Fri",
+                    "slots": [
+                        "4"
+                    ]
+                },
+                {
+                    "batch_id": "B5A_LAB1",
+                    "subject_id": "IT105",
+                    "faculty_id": "F105",
+                    "room_id": "L201",
+                    "day": "Wed",
+                    "slots": [
+                        "4"
+                    ]
+                },
+                {
+                    "batch_id": "B5A_LAB2",
+                    "subject_id": "IT105",
+                    "faculty_id": "F105",
+                    "room_id": "L201",
+                    "day": "Wed",
+                    "slots": [
+                        "5"
+                    ]
+                },
+                {
+                    "batch_id": "B5A_LAB3",
+                    "subject_id": "IT107",
+                    "faculty_id": "F107",
+                    "room_id": "L202",
+                    "day": "Mon",
+                    "slots": [
+                        "3"
+                    ]
+                },
+                {
+                    "batch_id": "B5B_LAB1",
+                    "subject_id": "IT105",
+                    "faculty_id": "F105",
+                    "room_id": "L202",
+                    "day": "Mon",
+                    "slots": [
+                        "4"
+                    ]
+                },
+                {
+                    "batch_id": "B5B_LAB2",
+                    "subject_id": "IT105",
+                    "faculty_id": "F105",
+                    "room_id": "L202",
+                    "day": "Thu",
+                    "slots": [
+                        "3"
+                    ]
+                },
+                {
+                    "batch_id": "B5B_LAB3",
+                    "subject_id": "IT107",
+                    "faculty_id": "F107",
+                    "room_id": "L202",
+                    "day": "Thu",
+                    "slots": [
+                        "4"
+                    ]
+                },
+                {
+                    "batch_id": "B7A",
+                    "subject_id": "IT108",
+                    "faculty_id": "F108",
+                    "room_id": "C101",
+                    "day": "Mon",
+                    "slots": [
+                        "3"
+                    ]
+                },
+                {
+                    "batch_id": "B7A",
+                    "subject_id": "IT110",
+                    "faculty_id": "F110",
+                    "room_id": "C101",
+                    "day": "Thu",
+                    "slots": [
+                        "3"
+                    ]
+                },
+                {
+                    "batch_id": "B7B",
+                    "subject_id": "IT108",
+                    "faculty_id": "F108",
+                    "room_id": "C101",
+                    "day": "Mon",
+                    "slots": [
+                        "4"
+                    ]
+                },
+                {
+                    "batch_id": "B7B",
+                    "subject_id": "IT110",
+                    "faculty_id": "F110",
+                    "room_id": "C101",
+                    "day": "Thu",
+                    "slots": [
+                        "4"
+                    ]
+                },
+                {
+                    "batch_id": "B7A_LAB1",
+                    "subject_id": "IT109",
+                    "faculty_id": "F109",
+                    "room_id": "L202",
+                    "day": "Tue",
+                    "slots": [
+                        "3"
+                    ]
+                },
+                {
+                    "batch_id": "B7A_LAB2",
+                    "subject_id": "IT109",
+                    "faculty_id": "F109",
+                    "room_id": "L202",
+                    "day": "Tue",
+                    "slots": [
+                        "4"
+                    ]
+                },
+                {
+                    "batch_id": "B7B_LAB1",
+                    "subject_id": "IT109",
+                    "faculty_id": "F109",
+                    "room_id": "L203",
+                    "day": "Fri",
+                    "slots": [
+                        "3"
+                    ]
+                },
+                {
+                    "batch_id": "B7B_LAB2",
+                    "subject_id": "IT109",
+                    "faculty_id": "F109",
+                    "room_id": "L203",
+                    "day": "Fri",
+                    "slots": [
+                        "4"
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,331 @@
+# timetable_scheduler/scheduler/timetable_solver.py
+
+import copy
+from collections import defaultdict
+from models.batch import Batch
+from models.faculty import Faculty
+from models.classroom import Classroom
+from models.subject import Subject
+from models.timetable import Timetable
+from data_io.data_loader import DataLoader
+from data_io.output_writer import OutputWriter
+
+class TimetableSolver:
+    def __init__(self, batches, subjects, faculty, classrooms, constraints):
+        # Initialize models
+        self.batches = {b['id']: Batch(**b) for b in batches}
+        self.subjects = {s['id']: Subject(**s) for s in subjects}
+        self.faculty = {f['id']: Faculty(**f) for f in faculty}
+        self.classrooms = {r['id']: Classroom(**r) for r in classrooms}
+        self.constraints = constraints
+
+        # Timetable object
+        self.timetable = Timetable(
+            semesters=list(set(b.semester for b in self.batches.values())),
+            working_days=constraints.get('working_days', ["Mon", "Tue", "Wed", "Thu", "Fri"]),
+            slots=constraints.get('slots', {str(i): f"{i}:00-{i+1}:00" for i in range(1, 8)}),
+            fixed_lab_slots=constraints.get('fixed_lab_slots_per_semester', {})
+        )
+
+        self.solutions = []
+        self.domains = self.generate_domains()
+
+    # ----------------------------
+    # Generate domains for each batch-subject pair
+    # ----------------------------
+    # def generate_domains(self):
+    #     domains = {}
+    #     for batch in self.batches.values():
+    #         for subj_id in batch.subjects:
+    #             subj = self.subjects[subj_id]
+    #             key = (batch.id, subj_id)
+    #             domain = []
+
+    #             if subj.is_lab():
+    #                 sem = batch.semester
+    #                 fixed_slot = self.constraints.get('fixed_lab_slots_per_semester', {}).get(str(sem))
+    #                 start_slot = int(fixed_slot['start_slot']) if fixed_slot else 1
+    #                 duration = fixed_slot['duration_slots'] if fixed_slot else 2
+    #                 for room in self.classrooms.values():
+    #                     if room.type == 'lab':
+    #                         for day in room.available_days:
+    #                             domain.append({'day': day, 'slot': list(range(start_slot, start_slot + duration)), 'room_id': room.id})
+    #             else:
+    #                 for room in self.classrooms.values():
+    #                     if room.type == 'lecture':
+    #                         for day in room.available_days:
+    #                             for slot in range(1, 8):
+    #                                 domain.append({'day': day, 'slot': [slot], 'room_id': room.id})
+    #             domains[key] = self.order_domain(domain, subj_id)
+    #     return domains
+    def generate_domains(self):
+        domains = {}
+        for batch in self.batches.values():
+            for subj_id in batch.subjects:
+                subj = self.subjects[subj_id]
+                key = (batch.id, subj_id)
+                domain = []
+    
+                if subj.is_lab():
+                    sem = batch.semester
+                    fixed_slot = self.constraints.get('fixed_lab_slots_per_semester', {}).get(str(sem))
+                    start_slot = int(fixed_slot['start_slot']) if fixed_slot else 1
+                    duration = fixed_slot['duration_slots'] if fixed_slot else 2
+                    for room in self.classrooms.values():
+                        if room.type == 'lab':
+                            for day in room.available_days:
+                                domain.append({'day': day, 'slot': list(range(start_slot, start_slot + duration)), 'room_id': room.id})
+                else:
+                    for room in self.classrooms.values():
+                        if room.type == 'lecture':
+                            for day in room.available_days:
+                                for slot in range(1, 8):
+                                    domain.append({'day': day, 'slot': [slot], 'room_id': room.id})
+                if not domain:
+                    print(f"⚠️ No domain available for Batch {batch.id}, Subject {subj_id}")
+                domains[key] = self.order_domain(domain, subj_id)
+        return domains
+
+
+    # ----------------------------
+    # Domain ordering by faculty preference + room capacity
+    # ----------------------------
+    def order_domain(self, domain, subj_id):
+        faculty_id = self.get_faculty_for_subject(subj_id)
+        fac = self.faculty.get(faculty_id)
+        if not fac:
+            return domain
+        domain.sort(key=lambda d: (
+            0 if d['day'] in fac.preferred_days else 1,
+            0 if str(d['slot'][0]) in fac.preferred_slots else 1,
+            self.classrooms[d['room_id']].capacity
+        ))
+        return domain
+
+    # ----------------------------
+    # Get a faculty eligible for a subject
+    # ----------------------------
+    def get_faculty_for_subject(self, subj_id):
+        for f in self.faculty.values():
+            if subj_id in f.subjects:
+                return f.id
+        return None
+
+    # ----------------------------
+    # Hard constraints check
+    # ----------------------------
+    # def check_hard_constraints(self, assignment, batch_id, subj_id, slot_info):
+    #     day = slot_info['day']
+    #     slots = slot_info['slot']
+    #     room_id = slot_info['room_id']
+    #     batch = self.batches[batch_id]
+    #     subj = self.subjects[subj_id]
+    #     faculty_id = self.get_faculty_for_subject(subj_id)
+    #     room = self.classrooms[room_id]
+    #     fac = self.faculty[faculty_id]
+
+    #     # Room capacity
+    #     if room.capacity < batch.strength:
+    #         return False
+
+    #     # Room availability
+    #     if not room.is_available(day, str(slots[0]), len(slots), batch.semester, subj.is_lab()):
+    #         return False
+
+    #     # Faculty availability
+    #     if not fac.is_available(day, str(slots[0]), len(slots), batch.semester, subj.is_lab()):
+    #         return False
+
+    #     # Batch availability
+    #     if not batch.is_available(day, str(slots[0]), len(slots)):
+    #         return False
+
+    #     # Conflicts with existing assignment
+    #     for a_batch_id, a_subj_id, a_slot_info in assignment:
+    #         a_faculty_id = self.get_faculty_for_subject(a_subj_id)
+    #         # overlapping day & slot
+    #         if a_slot_info['day'] == day and set(a_slot_info['slot']).intersection(slots):
+    #             # Room conflict
+    #             if a_slot_info['room_id'] == room_id:
+    #                 return False
+    #             # Faculty conflict
+    #             if a_faculty_id == faculty_id:
+    #                 return False
+    #             # Batch conflict
+    #             if a_batch_id == batch_id:
+    #                 return False
+        #     return True
+    def check_hard_constraints(self, assignment, batch_id, subj_id, slot_info):
+        day = slot_info['day']
+        slots = slot_info['slot']
+        room_id = slot_info['room_id']
+        batch = self.batches[batch_id]
+        subj = self.subjects[subj_id]
+        faculty_id = self.get_faculty_for_subject(subj_id)
+        room = self.classrooms[room_id]
+        fac = self.faculty.get(faculty_id)
+
+        # Room capacity
+        if room.capacity < batch.strength:
+            print(f"❌ Room {room_id} too small for Batch {batch_id} (strength {batch.strength})")
+            return False
+
+        # Room availability
+        if not room.is_available(day, str(slots[0]), len(slots), batch.semester, subj.is_lab()):
+            print(f"❌ Room {room_id} not available for Batch {batch_id} on {day} slots {slots}")
+            return False
+
+        # Faculty availability
+        if not fac.is_available(day, str(slots[0]), len(slots), batch.semester, subj.is_lab()):
+            print(f"❌ Faculty {faculty_id} not available for Subject {subj_id} on {day} slots {slots}")
+            return False
+
+        # Batch availability
+        if not batch.is_available(day, str(slots[0]), len(slots)):
+            print(f"❌ Batch {batch_id} not available on {day} slots {slots}")
+            return False
+
+        # Conflicts with existing assignment
+        for a_batch_id, a_subj_id, a_slot_info in assignment:
+            a_faculty_id = self.get_faculty_for_subject(a_subj_id)
+            if a_slot_info['day'] == day and set(a_slot_info['slot']).intersection(slots):
+                # Room conflict
+                if a_slot_info['room_id'] == room_id:
+                    print(f"❌ Room {room_id} already assigned for another class at {day} slots {slots}")
+                    return False
+                # Faculty conflict
+                if a_faculty_id == faculty_id:
+                    print(f"❌ Faculty {faculty_id} already teaching another class at {day} slots {slots}")
+                    return False
+                # Batch conflict
+                if a_batch_id == batch_id:
+                    print(f"❌ Batch {batch_id} already assigned another subject at {day} slots {slots}")
+                    return False
+        return True
+
+
+        # ----------------------------
+        # Soft constraints scoring
+    # ----------------------------
+    def score_timetable(self, assignment):
+        score = 0
+        faculty_schedule = defaultdict(list)
+        batch_schedule = defaultdict(list)
+        for batch_id, subj_id, slot_info in assignment:
+            subj = self.subjects[subj_id]
+            faculty_id = self.get_faculty_for_subject(subj_id)
+            day = slot_info['day']
+            slots = slot_info['slot']
+
+            fac = self.faculty.get(faculty_id)
+            if fac and not subj.is_lab():
+                if day in fac.preferred_days and str(slots[0]) in fac.preferred_slots:
+                    score += self.constraints['soft_constraints']['faculty_preferred_slots']['weight']
+
+            faculty_schedule[faculty_id].append((day, slots))
+            batch_schedule[batch_id].append((day, slots))
+
+        # Faculty overload penalty
+        for sessions in faculty_schedule.values():
+            sessions.sort()
+            for i in range(1, len(sessions)):
+                prev_day, prev_slots = sessions[i-1]
+                cur_day, cur_slots = sessions[i]
+                if prev_day == cur_day and min(cur_slots) - max(prev_slots) == 1:
+                    score -= self.constraints['soft_constraints']['avoid_faculty_overload']['weight']
+
+        # Minimize batch gaps
+        for sessions in batch_schedule.values():
+            day_dict = defaultdict(list)
+            for day, slots in sessions:
+                day_dict[day].extend(slots)
+            for day_slots in day_dict.values():
+                day_slots.sort()
+                gaps = sum(day_slots[i+1]-day_slots[i]-1 for i in range(len(day_slots)-1))
+                score -= gaps * self.constraints['soft_constraints']['minimize_gaps']['weight']
+
+        return score
+
+    # ----------------------------
+    # Backtracking with heuristics
+    # ----------------------------
+    def backtrack(self, assignment=[], unassigned=None):
+        if unassigned is None:
+            unassigned = sorted(self.domains.keys(), key=lambda k: (
+                0 if self.subjects[k[1]].is_lab() else 1,
+                -self.batches[k[0]].strength
+            ))
+
+        if not unassigned:
+            self.solutions.append({
+                'assignment': copy.deepcopy(assignment),
+                'score': self.score_timetable(assignment)
+            })
+            return
+
+        var = unassigned[0]
+        for slot_info in self.domains[var]:
+            if self.check_hard_constraints(assignment, var[0], var[1], slot_info):
+                # Tentative assignment
+                batch = self.batches[var[0]]
+                subj = self.subjects[var[1]]
+                fac = self.faculty[self.get_faculty_for_subject(var[1])]
+                room = self.classrooms[slot_info['room_id']]
+
+                # Assign
+                batch.assign_subject(slot_info['day'], str(slot_info['slot'][0]), var[1], len(slot_info['slot']))
+                fac.assign_subject(slot_info['day'], str(slot_info['slot'][0]), var[1], len(slot_info['slot']), batch.semester, subj.is_lab())
+                room.assign_batch(slot_info['day'], str(slot_info['slot'][0]), batch.id, len(slot_info['slot']), batch.semester, subj.is_lab())
+                self.timetable.assign_class(batch.semester, slot_info['day'], str(slot_info['slot'][0]),
+                                            batch.id, subj.id, fac.id, room.id, len(slot_info['slot']), subj.is_lab())
+
+                assignment.append((var[0], var[1], slot_info))
+                self.backtrack(assignment, unassigned[1:])
+                assignment.pop()
+
+                # Unassign
+                batch.unassign_subject(slot_info['day'], str(slot_info['slot'][0]), len(slot_info['slot']))
+                fac.unassign_subject(slot_info['day'], str(slot_info['slot'][0]), len(slot_info['slot']), batch.semester, subj.is_lab())
+                room.unassign_batch(slot_info['day'], str(slot_info['slot'][0]), len(slot_info['slot']), batch.semester, subj.is_lab())
+                self.timetable.unassign_class(batch.semester, slot_info['day'], str(slot_info['slot'][0]), len(slot_info['slot']))
+
+    # ----------------------------
+    # Solve & rank timetables
+    # ----------------------------
+    def solve(self, max_solutions=3):
+        self.backtrack()
+        self.solutions.sort(key=lambda x: x['score'], reverse=True)
+        return self.solutions[:max_solutions]
+
+
+# ----------------------------
+# Main execution
+# ----------------------------
+if __name__ == "__main__":
+    loader = DataLoader()
+    loader.load_all()
+    loader.validate_data()
+
+    solver = TimetableSolver(loader.batches, loader.subjects, loader.faculty, loader.classrooms, loader.constraints)
+    solutions = solver.solve(max_solutions=4)
+
+    writer = OutputWriter()
+    output_timetables = []
+    for rank, sol in enumerate(solutions, start=1):
+        output_timetables.append({
+            "timetable_id": f"T{rank}",
+            "rank": rank,
+            "score": sol['score'],
+            "schedule": [
+                {
+                    "batch_id": b,
+                    "subject_id": s,
+                    "faculty_id": solver.get_faculty_for_subject(s),
+                    "room_id": sess['room_id'],
+                    "day": sess['day'],
+                    "slots": sess['slot']
+                }
+                for b, s, sess in sol['assignment']
+            ]
+        })
+    writer.save_timetables(output_timetables)

@@ -1,0 +1,57 @@
+{
+  "hard_constraints": {
+    "no_overlap_faculty": true,
+    "no_overlap_room": true,
+    "no_overlap_batch": true,
+    "room_capacity": true,
+    "lab_in_lab": true,
+    "lecture_in_classroom": true,
+    "subject_hours_per_week": true,
+    "faculty_max_hours_per_week": true,
+    "fixed_lab_slots": true
+  },
+  "general_settings": {
+    "working_days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+    "slots": {
+      "1": "10:30-11:30",
+      "2": "11:30-12:30",
+      "3": "12:30-13:30",
+      "4": "14:00-15:00",
+      "5": "15:15-16:15",
+      "6": "16:15-17:15",
+      "7": "17:15-18:15"
+    },
+    "overflow_slots": ["6", "7"]
+  },
+  "fixed_lab_slots_per_semester": {
+    "3": {"start_slot": "4", "duration_slots": 2},   
+    "5": {"start_slot": "3", "duration_slots": 2},   
+    "7": {"start_slot": "2", "duration_slots": 3}    
+  },
+  "soft_constraints": {
+    "faculty_preferred_slots": {
+      "weight": 5,
+      "description": "Schedule faculty in their preferred days/slots for lectures"
+    },
+    "balanced_distribution": {
+      "weight": 4,
+      "description": "Spread lectures evenly across the week; avoid all lectures on same day"
+    },
+    "minimize_gaps": {
+      "weight": 3,
+      "description": "Avoid long idle gaps in a section's schedule"
+    },
+    "avoid_faculty_overload": {
+      "weight": 4,
+      "description": "Avoid back-to-back overload of classes for faculty"
+    },
+    "core_subjects_morning": {
+      "weight": 3,
+      "description": "Allocate core subjects in morning slots; electives later in day"
+    },
+    "minimize_free_periods": {
+      "weight": 2,
+      "description": "Reduce free periods for both students and faculty; labs with same room but different faculty allowed if capacity permits"
+    }
+  }
+}

@@ -1,0 +1,76 @@
+##  `timetable_scheduler/` Structure Explained
+
+### **1. Data Layer (`/data`)**
+
+Holds all your **inputs/outputs** in JSON/Excel.
+
+* `classrooms.json` → classrooms/labs info (capacity, type, facilities).
+* `faculty.json` → faculty details (availability, load, subjects they can teach).
+* `subjects.json` → subject/course info (hours/week, type, eligible faculty).
+* `batches.json` → sections/students (semester, subjects required, size).
+* `timetable_constraints.json` → hard & soft constraints (global rules).
+* `demo_data.json` → combined example dataset for testing.
+
+---
+
+### **2. Models (`/models`)**
+
+Defines your **core entities** (object representations).
+
+* `classroom.py` → `Classroom` model (id, type, capacity, facilities).
+* `faculty.py` → `Faculty` model (id, name, dept, load, availability).
+* `subject.py` → `Subject` model (id, hours/week, type, eligible faculty).
+* `batch.py` → `Batch` model (id, dept, semester, subjects required).
+* `timetable.py` → `Timetable` model (schedule representation, slots mapping).
+
+---
+
+### **3. Scheduler (`/scheduler`)**
+
+Where the real logic happens.
+
+* `constraint_checker.py` → Functions to validate:
+
+  * no faculty/room clash
+  * no batch clash
+  * room capacity rule
+  * max hours per day/week
+  * fixed slots, availability, etc.
+* `timetable_solver.py` → Core algorithm (backtracking, graph coloring, or ILP).
+* `utils.py` → Helper functions (slot generation, conflict detection).
+
+---
+
+### **4. IO (`/io`)**
+
+Handles **reading/writing data**.
+
+* `data_loader.py` → Load JSON/Excel → models.
+* `data_validator.py` → Check input sanity (e.g., missing subjects, wrong IDs).
+* `output_writer.py` → Export final timetable → JSON/Excel.
+
+---
+
+### **5. Tests (`/tests`)**
+
+Unit testing for stability.
+
+* `test_constraints.py` → Tests for clash/availability rules.
+* `test_scheduler.py` → Tests algorithm produces valid timetable.
+* `test_io.py` → Tests loading/saving works correctly.
+
+---
+
+### **6. Docs (`/docs`)**
+
+* `requirements.md` → Explain inputs, constraints, and expected workflow.
+
+---
+
+### **7. Root Files**
+
+* `requirements.txt` → Dependencies (pandas, ortools/pyomo, openpyxl, etc.).
+* `README.md` → Setup guide + usage instructions.
+
+---
+

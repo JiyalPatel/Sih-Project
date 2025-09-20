@@ -1,0 +1,80 @@
+{
+  "faculty": [
+    {
+      "id": "F101",
+      "name": "Prof. A",
+      "subjects": ["IT101"],
+      "max_hours_per_week": 12,
+      "preferred_days": ["Mon", "Wed", "Fri"],
+      "preferred_slots": ["1", "2", "3"]
+    },
+    {
+      "id": "F102",
+      "name": "Prof. B",
+      "subjects": ["IT102"],
+      "max_hours_per_week": 12,
+      "preferred_days": ["Tue", "Thu"],
+      "preferred_slots": ["1", "2", "3"]
+    },
+    {
+      "id": "F103",
+      "name": "Prof. C",
+      "subjects": ["IT103"],
+      "max_hours_per_week": 8,
+      "lab_slot": "fixed_lab_slot"
+    },
+    {
+      "id": "F104",
+      "name": "Prof. D",
+      "subjects": ["IT104"],
+      "max_hours_per_week": 12,
+      "preferred_days": ["Mon", "Thu"],
+      "preferred_slots": ["1", "2", "3", "4"]
+    },
+    {
+      "id": "F105",
+      "name": "Prof. E",
+      "subjects": ["IT105"],
+      "max_hours_per_week": 8,
+      "lab_slot": "fixed_lab_slot"
+    },
+    {
+      "id": "F106",
+      "name": "Prof. F",
+      "subjects": ["IT106"],
+      "max_hours_per_week": 12,
+      "preferred_days": ["Tue", "Fri"],
+      "preferred_slots": ["1", "2", "3", "4"]
+    },
+    {
+      "id": "F107",
+      "name": "Prof. G",
+      "subjects": ["IT107"],
+      "max_hours_per_week": 8,
+      "lab_slot": "fixed_lab_slot"
+    },
+    {
+      "id": "F108",
+      "name": "Prof. H",
+      "subjects": ["IT108"],
+      "max_hours_per_week": 12,
+      "preferred_days": ["Mon", "Wed"],
+      "preferred_slots": ["1", "2", "3", "4"]
+    },
+    {
+      "id": "F109",
+      "name": "Prof. I",
+      "subjects": ["IT109"],
+      "max_hours_per_week": 8,
+      "lab_slot": "fixed_lab_slot"
+    },
+    {
+      "id": "F110",
+      "name": "Prof. J",
+      "subjects": ["IT110"],
+      "max_hours_per_week": 12,
+      "preferred_days": ["Tue", "Thu"],
+      "preferred_slots": ["1", "2", "3", "4"]
+    }
+  ]
+}
