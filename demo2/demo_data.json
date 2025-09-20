@@ -1,0 +1,75 @@
+{
+    "faculties": [
+        {
+            "id": "F1",
+            "name": "Dr. Sharma",
+            "courses": ["C1", "C2"],
+            "unavailability": [{ "day": "Thursday", "time_slot": "afternoon" }]
+        },
+        {
+            "id": "F2",
+            "name": "Prof. Rao",
+            "courses": ["C3", "C4", "C5"],
+            "preferences": {
+                "time_of_day": "morning"
+            }
+        }
+    ],
+    "courses": [
+        {
+            "id": "C1",
+            "name": "AI",
+            "hours_per_week": 2,
+            "faculty_id": "F1"
+        },
+        {
+            "id": "C2",
+            "name": "Machine Learning",
+            "hours_per_week": 3,
+            "faculty_id": "F1",
+            "fixed_room": "R2"
+        },
+        {
+            "id": "C3",
+            "name": "Data Structures",
+            "hours_per_week": 3,
+            "faculty_id": "F2"
+        },
+        {
+            "id": "C4",
+            "name": "Algorithms",
+            "hours_per_week": 2,
+            "faculty_id": "F2"
+        },
+        {
+            "id": "C5",
+            "name": "Web Dev",
+            "hours_per_week": 2,
+            "faculty_id": "F2"
+        }
+    ],
+    "classrooms": [
+        {
+            "id": "R1",
+            "name": "Lab 101",
+            "capacity": 30
+        },
+        {
+            "id": "R2",
+            "name": "Lecture Hall 202",
+            "capacity": 60
+        }
+    ],
+    "time_slots": [
+        { "day": "Monday", "time_slot": "morning" },
+        { "day": "Monday", "time_slot": "afternoon" },
+        { "day": "Tuesday", "time_slot": "morning" },
+        { "day": "Tuesday", "time_slot": "afternoon" },
+        { "day": "Wednesday", "time_slot": "morning" },
+        { "day": "Wednesday", "time_slot": "afternoon" },
+        { "day": "Thursday", "time_slot": "morning" },
+        { "day": "Thursday", "time_slot": "afternoon" },
+        { "day": "Friday", "time_slot": "morning" },
+        { "day": "Friday", "time_slot": "afternoon" }
+    ]
+}
