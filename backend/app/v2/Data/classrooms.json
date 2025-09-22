@@ -1,0 +1,275 @@
+[
+  {
+    "id": "R1",
+    "name": "Lecture Hall A",
+    "type": "lecture",
+    "capacity": 120,
+    "available_days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ],
+    "available_slots": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ]
+  },
+  {
+    "id": "R2",
+    "name": "Lecture Hall B",
+    "type": "lecture",
+    "capacity": 100,
+    "available_days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ],
+    "available_slots": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ]
+  },
+  {
+    "id": "R3",
+    "name": "Lecture Hall C",
+    "type": "lecture",
+    "capacity": 80,
+    "available_days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ],
+    "available_slots": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ]
+  },
+  {
+    "id": "R4",
+    "name": "Lecture Hall D",
+    "type": "lecture",
+    "capacity": 70,
+    "available_days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ],
+    "available_slots": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ]
+  },
+  {
+    "id": "R5",
+    "name": "Lecture Hall E",
+    "type": "lecture",
+    "capacity": 90,
+    "available_days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ],
+    "available_slots": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ]
+  },
+  {
+    "id": "R6",
+    "name": "Lecture Hall F",
+    "type": "lecture",
+    "capacity": 75,
+    "available_days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ],
+    "available_slots": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ]
+  },
+  {
+    "id": "R7",
+    "name": "Lecture Hall G",
+    "type": "lecture",
+    "capacity": 60,
+    "available_days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ],
+    "available_slots": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ]
+  },
+  {
+    "id": "L1",
+    "name": "Computer Lab 1",
+    "type": "lab",
+    "capacity": 60,
+    "available_days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ],
+    "available_slots": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ]
+  },
+  {
+    "id": "L2",
+    "name": "Electronics Lab",
+    "type": "lab",
+    "capacity": 55,
+    "available_days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ],
+    "available_slots": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ]
+  },
+  {
+    "id": "L3",
+    "name": "Physics Lab",
+    "type": "lab",
+    "capacity": 50,
+    "available_days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ],
+    "available_slots": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ]
+  },
+  {
+    "id": "L4",
+    "name": "Networks Lab",
+    "type": "lab",
+    "capacity": 45,
+    "available_days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ],
+    "available_slots": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ]
+  },
+  {
+    "id": "L5",
+    "name": "DB Lab",
+    "type": "lab",
+    "capacity": 40,
+    "available_days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ],
+    "available_slots": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ]
+  },
+  {
+    "id": "L6",
+    "name": "Capstone Lab",
+    "type": "lab",
+    "capacity": 65,
+    "available_days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ],
+    "available_slots": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ]
+  }
+]

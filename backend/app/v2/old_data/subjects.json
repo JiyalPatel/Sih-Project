@@ -1,0 +1,63 @@
+[
+  {
+    "id": "S101",
+    "name": "Programming Lab",
+    "semester": 1,
+    "hours_per_week": 2,
+    "lab": true,
+    "lab_block_size": 2
+  },
+  {
+    "id": "S102",
+    "name": "Engineering Graphics",
+    "semester": 1,
+    "hours_per_week": 2,
+    "lab": true,
+    "lab_block_size": 2
+  },
+  {
+    "id": "S103",
+    "name": "Mathematics I",
+    "semester": 1,
+    "hours_per_week": 3,
+    "lab": false
+  },
+  {
+    "id": "S104",
+    "name": "Physics Lab",
+    "semester": 1,
+    "hours_per_week": 2,
+    "lab": true,
+    "lab_block_size": 2
+  },
+  {
+    "id": "S201",
+    "name": "Data Structures",
+    "semester": 3,
+    "hours_per_week": 3,
+    "lab": false
+  },
+  {
+    "id": "S202",
+    "name": "Algorithms Lab",
+    "semester": 3,
+    "hours_per_week": 2,
+    "lab": true,
+    "lab_block_size": 2
+  },
+  {
+    "id": "S301",
+    "name": "Networks",
+    "semester": 5,
+    "hours_per_week": 3,
+    "lab": false
+  },
+  {
+    "id": "S302",
+    "name": "OS Lab",
+    "semester": 5,
+    "hours_per_week": 2,
+    "lab": true,
+    "lab_block_size": 2
+  }
+]

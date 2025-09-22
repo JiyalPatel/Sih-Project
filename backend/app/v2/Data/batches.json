@@ -1,0 +1,110 @@
+[
+  {
+    "id": "B1",
+    "name": "B.Tech Year 1 (Sem 1)",
+    "semester": 1,
+    "strength": 60,
+    "subjects": [
+      "S101",
+      "S102",
+      "S103",
+      "S104"
+    ],
+    "available_days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ],
+    "available_slots": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ]
+  },
+  {
+    "id": "B3",
+    "name": "B.Tech Year 2 (Sem 3)",
+    "semester": 3,
+    "strength": 55,
+    "subjects": [
+      "S301",
+      "S302",
+      "S303",
+      "S304"
+    ],
+    "available_days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ],
+    "available_slots": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ]
+  },
+  {
+    "id": "B5",
+    "name": "B.Tech Year 3 (Sem 5)",
+    "semester": 5,
+    "strength": 50,
+    "subjects": [
+      "S501",
+      "S502",
+      "S503",
+      "S504"
+    ],
+    "available_days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ],
+    "available_slots": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ]
+  },
+  {
+    "id": "B7",
+    "name": "B.Tech Year 4 (Sem 7)",
+    "semester": 7,
+    "strength": 45,
+    "subjects": [
+      "S701",
+      "S702",
+      "S703",
+      "S704"
+    ],
+    "available_days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ],
+    "available_slots": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ]
+  }
+]

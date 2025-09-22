@@ -1,0 +1,25 @@
+{
+  "general_settings": {
+    "working_days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ],
+    "slots_per_day": 6
+  },
+  "combine_semesters": [
+    1,
+    3,
+    5,
+    7
+  ],
+  "time_limit": 300,
+  "max_solutions": 10,
+  "top_k": 5,
+  "random_seed": 42,
+  "auto_split_lab_batches": true,
+  "auto_split_threshold": 40,
+  "auto_lab_split_size": 20
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "F1",
+    "name": "Dr Alice",
+    "category": "assistant",
+    "subjects": [
+      "S101",
+      "S102"
+    ],
+    "max_hours_per_week": 20,
+    "max_lab_hours": 8,
+    "max_lecture_hours": 14
+  },
+  {
+    "id": "F2",
+    "name": "Dr Bob",
+    "category": "associate",
+    "subjects": [
+      "S103",
+      "S104"
+    ],
+    "max_hours_per_week": 16,
+    "max_lab_hours": 6,
+    "max_lecture_hours": 10
+  },
+  {
+    "id": "F3",
+    "name": "Dr Carol",
+    "category": "professor",
+    "subjects": [
+      "S201",
+      "S202"
+    ],
+    "max_hours_per_week": 12,
+    "max_lab_hours": 4,
+    "max_lecture_hours": 8
+  },
+  {
+    "id": "F4",
+    "name": "Dr Dave",
+    "category": "assistant",
+    "subjects": [
+      "S301",
+      "S302"
+    ],
+    "max_hours_per_week": 20,
+    "max_lab_hours": 8,
+    "max_lecture_hours": 14
+  }
+]

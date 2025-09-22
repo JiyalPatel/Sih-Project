@@ -1,0 +1,17 @@
+[
+  {
+    "id": "L1",
+    "capacity": 20,
+    "type": "lab"
+  },
+  {
+    "id": "L2",
+    "capacity": 20,
+    "type": "lab"
+  },
+  {
+    "id": "R1",
+    "capacity": 60,
+    "type": "lecture"
+  }
+]

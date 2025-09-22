@@ -1,0 +1,575 @@
+{
+  "score": 104,
+  "score_norm": 100,
+  "signature": "8b8b8df23270f0ce0c7ef6dfde38a3358ebb361b6c31b152002408478b0ce744",
+  "schedule": {
+    "1": {
+      "Mon": {
+        "1": [],
+        "2": [
+          {
+            "batch": "B1",
+            "subject": "S101",
+            "faculty": "F01",
+            "room": "R6",
+            "batch_size": 60,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "3": [
+          {
+            "batch": "B1",
+            "subject": "S103",
+            "faculty": "F03",
+            "room": "R3",
+            "batch_size": 60,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "4": [
+          {
+            "batch": "B1",
+            "subject": "S103",
+            "faculty": "F03",
+            "room": "R7",
+            "batch_size": 60,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "5": [],
+        "6": []
+      },
+      "Tue": {
+        "1": [
+          {
+            "batch": "B1",
+            "subject": "S102",
+            "faculty": "F02",
+            "room": "L6",
+            "batch_size": 60,
+            "duration": 1,
+            "is_lab": true
+          }
+        ],
+        "2": [],
+        "3": [
+          {
+            "batch": "B1",
+            "subject": "S101",
+            "faculty": "F01",
+            "room": "R3",
+            "batch_size": 60,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "4": [
+          {
+            "batch": "B1",
+            "subject": "S102",
+            "faculty": "F02",
+            "room": "L6",
+            "batch_size": 60,
+            "duration": 1,
+            "is_lab": true
+          }
+        ],
+        "5": [
+          {
+            "batch": "B1",
+            "subject": "S104",
+            "faculty": "F04",
+            "room": "R4",
+            "batch_size": 60,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "6": []
+      },
+      "Wed": {
+        "1": [],
+        "2": [],
+        "3": [],
+        "4": [],
+        "5": [],
+        "6": [
+          {
+            "batch": "B1",
+            "subject": "S104",
+            "faculty": "F04",
+            "room": "R5",
+            "batch_size": 60,
+            "duration": 1,
+            "is_lab": false
+          }
+        ]
+      },
+      "Thu": {
+        "1": [
+          {
+            "batch": "B1",
+            "subject": "S101",
+            "faculty": "F01",
+            "room": "R5",
+            "batch_size": 60,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "2": [],
+        "3": [],
+        "4": [],
+        "5": [],
+        "6": []
+      },
+      "Fri": {
+        "1": [],
+        "2": [],
+        "3": [],
+        "4": [],
+        "5": [
+          {
+            "batch": "B1",
+            "subject": "S103",
+            "faculty": "F03",
+            "room": "R6",
+            "batch_size": 60,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "6": [
+          {
+            "batch": "B1",
+            "subject": "S104",
+            "faculty": "F04",
+            "room": "R3",
+            "batch_size": 60,
+            "duration": 1,
+            "is_lab": false
+          }
+        ]
+      }
+    },
+    "3": {
+      "Mon": {
+        "1": [
+          {
+            "batch": "B3",
+            "subject": "S302",
+            "faculty": "F09",
+            "room": "R3",
+            "batch_size": 55,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "2": [],
+        "3": [],
+        "4": [],
+        "5": [
+          {
+            "batch": "B3",
+            "subject": "S301",
+            "faculty": "F01",
+            "room": "L1",
+            "batch_size": 55,
+            "duration": 1,
+            "is_lab": true
+          }
+        ],
+        "6": [
+          {
+            "batch": "B3",
+            "subject": "S304",
+            "faculty": "F04",
+            "room": "R4",
+            "batch_size": 55,
+            "duration": 1,
+            "is_lab": false
+          }
+        ]
+      },
+      "Tue": {
+        "1": [],
+        "2": [],
+        "3": [],
+        "4": [
+          {
+            "batch": "B3",
+            "subject": "S304",
+            "faculty": "F08",
+            "room": "R3",
+            "batch_size": 55,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "5": [],
+        "6": []
+      },
+      "Wed": {
+        "1": [],
+        "2": [],
+        "3": [
+          {
+            "batch": "B3",
+            "subject": "S303",
+            "faculty": "F03",
+            "room": "R6",
+            "batch_size": 55,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "4": [],
+        "5": [],
+        "6": [
+          {
+            "batch": "B3",
+            "subject": "S303",
+            "faculty": "F03",
+            "room": "R3",
+            "batch_size": 55,
+            "duration": 1,
+            "is_lab": false
+          }
+        ]
+      },
+      "Thu": {
+        "1": [],
+        "2": [],
+        "3": [
+          {
+            "batch": "B3",
+            "subject": "S301",
+            "faculty": "F01",
+            "room": "L1",
+            "batch_size": 55,
+            "duration": 1,
+            "is_lab": true
+          }
+        ],
+        "4": [],
+        "5": [
+          {
+            "batch": "B3",
+            "subject": "S302",
+            "faculty": "F09",
+            "room": "R2",
+            "batch_size": 55,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "6": []
+      },
+      "Fri": {
+        "1": [],
+        "2": [
+          {
+            "batch": "B3",
+            "subject": "S304",
+            "faculty": "F04",
+            "room": "R7",
+            "batch_size": 55,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "3": [
+          {
+            "batch": "B3",
+            "subject": "S303",
+            "faculty": "F03",
+            "room": "R3",
+            "batch_size": 55,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "4": [
+          {
+            "batch": "B3",
+            "subject": "S302",
+            "faculty": "F05",
+            "room": "R7",
+            "batch_size": 55,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "5": [],
+        "6": []
+      }
+    },
+    "5": {
+      "Mon": {
+        "1": [],
+        "2": [],
+        "3": [],
+        "4": [
+          {
+            "batch": "B5",
+            "subject": "S501",
+            "faculty": "F06",
+            "room": "L6",
+            "batch_size": 50,
+            "duration": 1,
+            "is_lab": true
+          }
+        ],
+        "5": [],
+        "6": []
+      },
+      "Tue": {
+        "1": [
+          {
+            "batch": "B5",
+            "subject": "S503",
+            "faculty": "F05",
+            "room": "R5",
+            "batch_size": 50,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "2": [
+          {
+            "batch": "B5",
+            "subject": "S503",
+            "faculty": "F05",
+            "room": "R7",
+            "batch_size": 50,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "3": [],
+        "4": [],
+        "5": [],
+        "6": [
+          {
+            "batch": "B5",
+            "subject": "S504",
+            "faculty": "F07",
+            "room": "R4",
+            "batch_size": 50,
+            "duration": 1,
+            "is_lab": false
+          }
+        ]
+      },
+      "Wed": {
+        "1": [],
+        "2": [],
+        "3": [],
+        "4": [],
+        "5": [],
+        "6": []
+      },
+      "Thu": {
+        "1": [],
+        "2": [
+          {
+            "batch": "B5",
+            "subject": "S504",
+            "faculty": "F07",
+            "room": "R6",
+            "batch_size": 50,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "3": [
+          {
+            "batch": "B5",
+            "subject": "S501",
+            "faculty": "F02",
+            "room": "L2",
+            "batch_size": 50,
+            "duration": 1,
+            "is_lab": true
+          }
+        ],
+        "4": [],
+        "5": [
+          {
+            "batch": "B5",
+            "subject": "S503",
+            "faculty": "F05",
+            "room": "R4",
+            "batch_size": 50,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "6": []
+      },
+      "Fri": {
+        "1": [],
+        "2": [
+          {
+            "batch": "B5",
+            "subject": "S502",
+            "faculty": "F07",
+            "room": "L2",
+            "batch_size": 50,
+            "duration": 1,
+            "is_lab": true
+          }
+        ],
+        "3": [
+          {
+            "batch": "B5",
+            "subject": "S502",
+            "faculty": "F07",
+            "room": "L2",
+            "batch_size": 50,
+            "duration": 1,
+            "is_lab": true
+          }
+        ],
+        "4": [],
+        "5": [],
+        "6": [
+          {
+            "batch": "B5",
+            "subject": "S504",
+            "faculty": "F07",
+            "room": "R7",
+            "batch_size": 50,
+            "duration": 1,
+            "is_lab": false
+          }
+        ]
+      }
+    },
+    "7": {
+      "Mon": {
+        "1": [],
+        "2": [],
+        "3": [
+          {
+            "batch": "B7",
+            "subject": "S702",
+            "faculty": "F10",
+            "room": "R1",
+            "batch_size": 45,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "4": [],
+        "5": [],
+        "6": []
+      },
+      "Tue": {
+        "1": [],
+        "2": [],
+        "3": [
+          {
+            "batch": "B7",
+            "subject": "S703",
+            "faculty": "F10",
+            "room": "R4",
+            "batch_size": 45,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "4": [],
+        "5": [],
+        "6": []
+      },
+      "Wed": {
+        "1": [
+          {
+            "batch": "B7",
+            "subject": "S702",
+            "faculty": "F10",
+            "room": "R6",
+            "batch_size": 45,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "2": [],
+        "3": [],
+        "4": [],
+        "5": [
+          {
+            "batch": "B7",
+            "subject": "S703",
+            "faculty": "F10",
+            "room": "R4",
+            "batch_size": 45,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "6": []
+      },
+      "Thu": {
+        "1": [],
+        "2": [],
+        "3": [
+          {
+            "batch": "B7",
+            "subject": "S704",
+            "faculty": "F04",
+            "room": "R2",
+            "batch_size": 45,
+            "duration": 1,
+            "is_lab": false
+          }
+        ],
+        "4": [],
+        "5": [],
+        "6": [
+          {
+            "batch": "B7",
+            "subject": "S702",
+            "faculty": "F10",
+            "room": "R4",
+            "batch_size": 45,
+            "duration": 1,
+            "is_lab": false
+          }
+        ]
+      },
+      "Fri": {
+        "1": [
+          {
+            "batch": "B7",
+            "subject": "S701",
+            "faculty": "F10",
+            "room": "L6",
+            "batch_size": 45,
+            "duration": 1,
+            "is_lab": true
+          }
+        ],
+        "2": [],
+        "3": [
+          {
+            "batch": "B7",
+            "subject": "S701",
+            "faculty": "F08",
+            "room": "L3",
+            "batch_size": 45,
+            "duration": 1,
+            "is_lab": true
+          }
+        ],
+        "4": [],
+        "5": [],
+        "6": []
+      }
+    }
+  }
+}

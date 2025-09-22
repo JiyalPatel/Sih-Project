@@ -1,0 +1,57 @@
+[
+  {
+    "id": "B1",
+    "semester": 1,
+    "strength": 60,
+    "sub_groups": [
+      {
+        "id": "B1_G1",
+        "strength": 15
+      },
+      {
+        "id": "B1_G2",
+        "strength": 15
+      },
+      {
+        "id": "B1_G3",
+        "strength": 15
+      },
+      {
+        "id": "B1_G4",
+        "strength": 15
+      }
+    ],
+    "subjects": [
+      "S101",
+      "S102"
+    ]
+  },
+  {
+    "id": "B2",
+    "semester": 1,
+    "strength": 45,
+    "lab_split_size": 15,
+    "subjects": [
+      "S103",
+      "S104"
+    ]
+  },
+  {
+    "id": "B3",
+    "semester": 3,
+    "strength": 40,
+    "subjects": [
+      "S201",
+      "S202"
+    ]
+  },
+  {
+    "id": "B5",
+    "semester": 5,
+    "strength": 50,
+    "subjects": [
+      "S301",
+      "S302"
+    ]
+  }
+]

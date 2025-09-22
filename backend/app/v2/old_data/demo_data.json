@@ -1,0 +1,214 @@
+{
+  "subjects": [
+    {
+      "id": "S101",
+      "name": "Programming Lab",
+      "semester": 1,
+      "hours_per_week": 2,
+      "lab": true,
+      "lab_block_size": 2
+    },
+    {
+      "id": "S102",
+      "name": "Engineering Graphics",
+      "semester": 1,
+      "hours_per_week": 2,
+      "lab": true,
+      "lab_block_size": 2
+    },
+    {
+      "id": "S103",
+      "name": "Mathematics I",
+      "semester": 1,
+      "hours_per_week": 3,
+      "lab": false
+    },
+    {
+      "id": "S104",
+      "name": "Physics Lab",
+      "semester": 1,
+      "hours_per_week": 2,
+      "lab": true,
+      "lab_block_size": 2
+    },
+    {
+      "id": "S201",
+      "name": "Data Structures",
+      "semester": 3,
+      "hours_per_week": 3,
+      "lab": false
+    },
+    {
+      "id": "S202",
+      "name": "Algorithms Lab",
+      "semester": 3,
+      "hours_per_week": 2,
+      "lab": true,
+      "lab_block_size": 2
+    },
+    {
+      "id": "S301",
+      "name": "Networks",
+      "semester": 5,
+      "hours_per_week": 3,
+      "lab": false
+    },
+    {
+      "id": "S302",
+      "name": "OS Lab",
+      "semester": 5,
+      "hours_per_week": 2,
+      "lab": true,
+      "lab_block_size": 2
+    }
+  ],
+  "classrooms": [
+    {
+      "id": "L1",
+      "capacity": 20,
+      "type": "lab"
+    },
+    {
+      "id": "L2",
+      "capacity": 20,
+      "type": "lab"
+    },
+    {
+      "id": "R1",
+      "capacity": 60,
+      "type": "lecture"
+    }
+  ],
+  "faculty": [
+    {
+      "id": "F1",
+      "name": "Dr Alice",
+      "category": "assistant",
+      "subjects": [
+        "S101",
+        "S102"
+      ],
+      "max_hours_per_week": 20,
+      "max_lab_hours": 8,
+      "max_lecture_hours": 14
+    },
+    {
+      "id": "F2",
+      "name": "Dr Bob",
+      "category": "associate",
+      "subjects": [
+        "S103",
+        "S104"
+      ],
+      "max_hours_per_week": 16,
+      "max_lab_hours": 6,
+      "max_lecture_hours": 10
+    },
+    {
+      "id": "F3",
+      "name": "Dr Carol",
+      "category": "professor",
+      "subjects": [
+        "S201",
+        "S202"
+      ],
+      "max_hours_per_week": 12,
+      "max_lab_hours": 4,
+      "max_lecture_hours": 8
+    },
+    {
+      "id": "F4",
+      "name": "Dr Dave",
+      "category": "assistant",
+      "subjects": [
+        "S301",
+        "S302"
+      ],
+      "max_hours_per_week": 20,
+      "max_lab_hours": 8,
+      "max_lecture_hours": 14
+    }
+  ],
+  "batches": [
+    {
+      "id": "B1",
+      "semester": 1,
+      "strength": 60,
+      "sub_groups": [
+        {
+          "id": "B1_G1",
+          "strength": 15
+        },
+        {
+          "id": "B1_G2",
+          "strength": 15
+        },
+        {
+          "id": "B1_G3",
+          "strength": 15
+        },
+        {
+          "id": "B1_G4",
+          "strength": 15
+        }
+      ],
+      "subjects": [
+        "S101",
+        "S102"
+      ]
+    },
+    {
+      "id": "B2",
+      "semester": 1,
+      "strength": 45,
+      "lab_split_size": 15,
+      "subjects": [
+        "S103",
+        "S104"
+      ]
+    },
+    {
+      "id": "B3",
+      "semester": 3,
+      "strength": 40,
+      "subjects": [
+        "S201",
+        "S202"
+      ]
+    },
+    {
+      "id": "B5",
+      "semester": 5,
+      "strength": 50,
+      "subjects": [
+        "S301",
+        "S302"
+      ]
+    }
+  ],
+  "timetable_constraints": {
+    "general_settings": {
+      "working_days": [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri"
+      ],
+      "slots_per_day": 6
+    },
+    "combine_semesters": [
+      1,
+      3,
+      5,
+      7
+    ],
+    "time_limit": 300,
+    "max_solutions": 10,
+    "top_k": 5,
+    "random_seed": 42,
+    "auto_split_lab_batches": true,
+    "auto_split_threshold": 40,
+    "auto_lab_split_size": 20
+  }
+}
