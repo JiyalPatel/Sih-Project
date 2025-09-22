@@ -1,0 +1,73 @@
+# ---------------------
+# Global ignores
+# ---------------------
+
+# Node modules (both backend and frontend)
+**/node_modules/
+
+# Logs
+**/*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# dotenv files
+**/.env
+**/.env.*.local
+
+# OS system files
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# ---------------------
+# Backend-specific ignores
+# ---------------------
+
+# Compiled output
+/backend/dist/
+/backend/build/
+
+/backend/coverage/
+/backend/.nyc_output/
+/backend/*.tsbuildinfo
+
+# PM2 logs or pids
+/backend/pids
+/backend/*.pid
+/backend/*.seed
+/backend/*.pid.lock
+
+# ---------------------
+# Frontend-specific ignores
+# ---------------------
+
+# React build output
+/frontend/build/
+
+# Testing coverage
+/frontend/coverage/
+
+# Cache
+/frontend/.cache/
+frontend/.eslintcache
+frontend/.prettiercache
+
+# Storybook or other tools
+/frontend/.storybook-out/
+/frontend/out/
+
+# ---------------------
+# Misc
+# ---------------------
+
+*.swp
+*.bak
+*.orig
+*.tgz
