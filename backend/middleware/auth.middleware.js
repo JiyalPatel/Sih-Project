@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.models.js");
+const { JWT_SECRET } = require("../constants");
 
 const protect = async (req, res, next) => {
     let token = req.headers.authorization?.split(" ")[1];
@@ -7,7 +8,7 @@ const protect = async (req, res, next) => {
         return res.status(401).json({ msg: "Not authorized, no token" });
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, JWT_SECRET);
         req.user = await User.findById(decoded.id).select("-password");
         next();
     } catch (err) {
