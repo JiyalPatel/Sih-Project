@@ -26,7 +26,7 @@ const Login = () => {
     const userTypes = [
         { value: "institute", label: "Institute Admin" },
         { value: "hod", label: "Head of Department" },
-        { value: "admin", label: "System Admin" },
+        { value: "dep-admin", label: "Department Admin" },
         { value: "faculty", label: "Faculty Member" },
     ];
 
@@ -195,7 +195,7 @@ const Login = () => {
                     </Card>
 
                     {/* Demo Credentials */}
-                    <Card className="mt-6 card-flat">
+                    {/* <Card className="mt-6 card-flat">
                         <CardHeader>
                             <CardTitle className="text-sm font-medium">
                                 Demo Credentials
@@ -213,7 +213,7 @@ const Login = () => {
                                 </p>
                             </div>
                         </CardContent>
-                    </Card>
+                    </Card> */}
                 </div>
             </div>
         </div>
