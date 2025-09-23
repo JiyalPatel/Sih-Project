@@ -1,6 +1,5 @@
 const User = require("../models/user.models.js");
 const Institute = require("../models/institute.model.js");
-const bcrypt = require("bcryptjs");
 
 // Create Institute (with User together)
 const createInstitute = async (req, res) => {
@@ -90,7 +89,7 @@ const updateInstitute = async (req, res) => {
         const user = await User.findById(institute.institute_acc._id);
         if (name) user.name = name;
         if (email) user.email = email;
-        if (password) user.password = await bcrypt.hash(password, 10); // hash password
+        if (password) user.password = password; // hash password
 
         await user.save();
         await institute.save();
