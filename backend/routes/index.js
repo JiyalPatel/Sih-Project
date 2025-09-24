@@ -6,11 +6,15 @@ const userRoutes = require("./user.routes");
 const instituteRoutes = require("./institute.routes");
 const facultyRoutes = require("./faculty.routes");
 const subjectRoutes = require("./subject.routes");
+const roomRoutes = require("./room.routes");
+const batchRoutes = require("./batch.routes");
 
 router.use("/auth", authRoutes);
 router.use("/users", userRoutes);
 router.use("/institutes", instituteRoutes);
 router.use("/faculties", facultyRoutes);
 router.use("/subjects", subjectRoutes);
+router.use("/rooms", roomRoutes);
+router.use("/batches", batchRoutes);
 
 module.exports = router;
