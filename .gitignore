@@ -1,6 +1,7 @@
 # ---------------------
 # Global ignores
 # ---------------------
+*.zip
 
 # Node modules (both backend and frontend)
 **/node_modules/
