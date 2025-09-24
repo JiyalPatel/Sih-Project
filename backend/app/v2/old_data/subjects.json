@@ -1,63 +1,130 @@
 [
   {
     "id": "S101",
-    "name": "Programming Lab",
-    "semester": 1,
-    "hours_per_week": 2,
-    "lab": true,
-    "lab_block_size": 2
+    "name": "Engineering Mathematics I",
+    "lab": false,
+    "duration_slots": 1,
+    "hours_per_week": 3,
+    "semester": 1
   },
   {
     "id": "S102",
-    "name": "Engineering Graphics",
-    "semester": 1,
-    "hours_per_week": 2,
+    "name": "Introduction to Programming Lab",
     "lab": true,
-    "lab_block_size": 2
+    "lab_block_size": 2,
+    "hours_per_week": 2,
+    "semester": 1
   },
   {
     "id": "S103",
-    "name": "Mathematics I",
-    "semester": 1,
+    "name": "Physics for Engineers",
+    "lab": false,
+    "duration_slots": 1,
     "hours_per_week": 3,
-    "lab": false
+    "semester": 1
   },
   {
     "id": "S104",
-    "name": "Physics Lab",
-    "semester": 1,
-    "hours_per_week": 2,
-    "lab": true,
-    "lab_block_size": 2
-  },
-  {
-    "id": "S201",
-    "name": "Data Structures",
-    "semester": 3,
+    "name": "Basic Chemistry",
+    "lab": false,
+    "duration_slots": 1,
     "hours_per_week": 3,
-    "lab": false
-  },
-  {
-    "id": "S202",
-    "name": "Algorithms Lab",
-    "semester": 3,
-    "hours_per_week": 2,
-    "lab": true,
-    "lab_block_size": 2
+    "semester": 1
   },
   {
     "id": "S301",
-    "name": "Networks",
-    "semester": 5,
-    "hours_per_week": 3,
-    "lab": false
+    "name": "Digital Systems Lab",
+    "lab": true,
+    "lab_block_size": 2,
+    "hours_per_week": 2,
+    "semester": 3
   },
   {
     "id": "S302",
-    "name": "OS Lab",
-    "semester": 5,
-    "hours_per_week": 2,
+    "name": "Data Structures and Algorithms",
+    "lab": false,
+    "duration_slots": 1,
+    "hours_per_week": 3,
+    "semester": 3
+  },
+  {
+    "id": "S303",
+    "name": "Electronic Circuits",
+    "lab": false,
+    "duration_slots": 1,
+    "hours_per_week": 3,
+    "semester": 3
+  },
+  {
+    "id": "S304",
+    "name": "Signals and Systems",
+    "lab": false,
+    "duration_slots": 1,
+    "hours_per_week": 3,
+    "semester": 3
+  },
+  {
+    "id": "S501",
+    "name": "Microcontroller Lab",
     "lab": true,
-    "lab_block_size": 2
+    "lab_block_size": 2,
+    "hours_per_week": 2,
+    "semester": 5
+  },
+  {
+    "id": "S502",
+    "name": "Database Systems Lab",
+    "lab": true,
+    "lab_block_size": 2,
+    "hours_per_week": 2,
+    "semester": 5
+  },
+  {
+    "id": "S503",
+    "name": "Operating Systems",
+    "lab": false,
+    "duration_slots": 1,
+    "hours_per_week": 3,
+    "semester": 5
+  },
+  {
+    "id": "S504",
+    "name": "Computer Networks",
+    "lab": false,
+    "duration_slots": 1,
+    "hours_per_week": 3,
+    "semester": 5
+  },
+  {
+    "id": "S701",
+    "name": "Capstone Project Lab",
+    "lab": true,
+    "lab_block_size": 2,
+    "hours_per_week": 2,
+    "semester": 7
+  },
+  {
+    "id": "S702",
+    "name": "Advanced Topics in AI",
+    "lab": false,
+    "duration_slots": 1,
+    "hours_per_week": 3,
+    "semester": 7
+  },
+  {
+    "id": "S703",
+    "name": "Professional Ethics & Management",
+    "lab": false,
+    "duration_slots": 1,
+    "hours_per_week": 2,
+    "semester": 7
+  },
+  {
+    "id": "S704",
+    "name": "Seminar and Presentation",
+    "lab": false,
+    "duration_slots": 1,
+    "hours_per_week": 1,
+    "semester": 7
   }
 ]
