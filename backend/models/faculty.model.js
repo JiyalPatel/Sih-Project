@@ -7,6 +7,11 @@ const FacultySchema = new mongoose.Schema(
             ref: "User",
             required: true,
         },
+        department: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Department",
+            required: true,
+        },
         upcoming_classes: [
             { type: mongoose.Schema.Types.ObjectId, ref: "TimeSlot" },
         ],

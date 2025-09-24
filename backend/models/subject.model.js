@@ -4,7 +4,11 @@ const SubjectSchema = new mongoose.Schema(
     {
         name: { type: String, required: true },
         subjectCode: { type: String, required: true, unique: true },
-        department: { type: String, required: true },
+        department: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Department",
+            required: true,
+        },
         semester: { type: Number, required: true },
         isLab: { type: Boolean, default: false },
         credits: { type: Number, required: true },
