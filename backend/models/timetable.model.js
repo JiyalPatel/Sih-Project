@@ -6,6 +6,7 @@ const timetableSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Batch",
             required: true,
+            unique: true,
         },
         slots: [
             {
