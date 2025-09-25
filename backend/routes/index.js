@@ -12,6 +12,8 @@ const hodRoutes = require("./hod.routes");
 const deptAdminRoutes = require("./deptadmin.routes");
 const departmentRoutes = require("./department.routes");
 const schedulerRoutes = require("./scheduler.routes");
+const timetableRoutes = require("./timetable.routes");
+const timeslotRoutes = require("./timeslot.routes");
 
 router.use("/", schedulerRoutes);
 
@@ -25,5 +27,7 @@ router.use("/batches", batchRoutes);
 router.use("/hods", hodRoutes);
 router.use("/dept-admins", deptAdminRoutes);
 router.use("/departments", departmentRoutes);
+router.use("/timetables", timetableRoutes);
+router.use("/timeslots", timeslotRoutes);
 
 module.exports = router;
