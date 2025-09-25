@@ -1,376 +1,491 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Edit, Trash2, Users, Mail, Phone, Award } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    DialogFooter,
+    DialogClose,
+} from "@/components/ui/dialog";
+import { Plus, Edit, Trash2, Building, UserCheck } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import api from "@/lib/api";
+import { Skeleton } from "@/components/ui/skeleton";
 
-interface Faculty {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  department: string;
-  designation: string;
-  specialization: string;
-  experience: number;
+// --- Corrected Interfaces to match backend populated models ---
+
+// The User object that gets populated inside the HOD
+interface PopulatedUser {
+    _id: string;
+    name: string;
 }
 
-const FacultyPage = () => {
-  const { toast } = useToast();
-  const [faculties, setFaculties] = useState<Faculty[]>([
-    {
-      id: "1",
-      name: "Dr. John Smith",
-      email: "john.smith@university.edu",
-      phone: "+1-234-567-8901",
-      department: "Computer Science",
-      designation: "Professor",
-      specialization: "Data Structures, Algorithms",
-      experience: 15
-    },
-    {
-      id: "2",
-      name: "Dr. Sarah Johnson",
-      email: "sarah.johnson@university.edu",
-      phone: "+1-234-567-8902",
-      department: "Computer Science",
-      designation: "Associate Professor",
-      specialization: "Database Systems, Data Mining",
-      experience: 12
-    },
-    {
-      id: "3",
-      name: "Prof. Michael Davis",
-      email: "michael.davis@university.edu",
-      phone: "+1-234-567-8903",
-      department: "Information Technology",
-      designation: "Assistant Professor",
-      specialization: "Web Development, UI/UX",
-      experience: 8
-    }
-  ]);
+// The HOD object, which contains the populated user
+interface Hod {
+    _id: string;
+    name: string;
+    email: string;
+    user?: PopulatedUser; // The populated user field
+}
 
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [editingFaculty, setEditingFaculty] = useState<Faculty | null>(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    department: "",
-    designation: "",
-    specialization: "",
-    experience: 0
-  });
+// The Department, with an optional, populated HOD
+interface Department {
+    _id: string;
+    name: string;
+    institute: string;
+    hod?: Hod;
+}
 
-  const departments = ["Computer Science", "Information Technology", "Electronics", "Mechanical"];
-  const designations = ["Professor", "Associate Professor", "Assistant Professor", "Lecturer"];
+// The Institute, with a populated institute_acc field
+interface Institute {
+    _id: string;
+    institute_acc: {
+        _id: string;
+        // The backend also populates name and email, but _id is all we need here
+    };
+}
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (editingFaculty) {
-      setFaculties(faculties.map(faculty => 
-        faculty.id === editingFaculty.id 
-          ? { ...editingFaculty, ...formData }
-          : faculty
-      ));
-      toast({
-        title: "Faculty Updated",
-        description: "Faculty member has been updated successfully.",
-      });
-      setEditingFaculty(null);
-    } else {
-      const newFaculty: Faculty = {
-        id: Date.now().toString(),
-        ...formData
-      };
-      setFaculties([...faculties, newFaculty]);
-      toast({
-        title: "Faculty Added",
-        description: "New faculty member has been added successfully.",
-      });
-    }
-    
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      department: "",
-      designation: "",
-      specialization: "",
-      experience: 0
-    });
-    setShowAddForm(false);
-  };
+const DepartmentPage = () => {
+    const { toast } = useToast();
+    const [departments, setDepartments] = useState<Department[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [showAddForm, setShowAddForm] = useState(false); // Reverted state name for clarity
+    const [editingDepartment, setEditingDepartment] =
+        useState<Department | null>(null);
 
-  const handleEdit = (faculty: Faculty) => {
-    setEditingFaculty(faculty);
-    setFormData({
-      name: faculty.name,
-      email: faculty.email,
-      phone: faculty.phone,
-      department: faculty.department,
-      designation: faculty.designation,
-      specialization: faculty.specialization,
-      experience: faculty.experience
-    });
-    setShowAddForm(true);
-  };
+    // This state will hold the actual MongoDB _id of the institute document
+    const [actualInstituteId, setActualInstituteId] = useState<string | null>(
+        null
+    );
 
-  const handleDelete = (id: string) => {
-    setFaculties(faculties.filter(faculty => faculty.id !== id));
-    toast({
-      title: "Faculty Deleted",
-      description: "Faculty member has been removed successfully.",
-      variant: "destructive",
-    });
-  };
+    const initialFormData = {
+        name: "",
+        hodName: "",
+        hodEmail: "",
+        hodPassword: "",
+    };
+    const [formData, setFormData] = useState(initialFormData);
 
-  const getDesignationColor = (designation: string) => {
-    switch (designation) {
-      case "Professor":
-        return "bg-primary/10 text-primary";
-      case "Associate Professor":
-        return "bg-secondary/10 text-secondary";
-      case "Assistant Professor":
-        return "bg-accent/10 text-accent";
-      case "Lecturer":
-        return "bg-warning/10 text-warning";
-      default:
-        return "bg-muted text-muted-foreground";
-    }
-  };
+    // --- Data Fetching and Management ---
 
-  return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Department Management</h1>
-          <p className="text-muted-foreground">Manage faculty members and their information</p>
-        </div>
-        <Button 
-          onClick={() => setShowAddForm(true)}
-          className="btn-primary"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Add Faculty
-        </Button>
-      </div>
+    const fetchDepartments = useCallback(
+        async (instituteId: string) => {
+            setIsLoading(true);
+            try {
+                const response = await api.get(
+                    `/departments?instituteId=${instituteId}`
+                );
+                setDepartments(response.data);
+            } catch (error) {
+                console.error("Failed to fetch department data:", error);
+                toast({
+                    title: "Error",
+                    description: "Could not load department data.",
+                    variant: "destructive",
+                });
+            } finally {
+                setIsLoading(false);
+            }
+        },
+        [toast]
+    );
+   
 
-      {/* Add/Edit Form */}
-      {showAddForm && (
-        <Card className="card-elevated animate-scale-in">
-          <CardHeader>
-            <CardTitle>{editingFaculty ? "Edit Faculty" : "Add New Faculty"}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  placeholder="Enter full name"
-                  className="form-input"
-                  required
-                />
-              </div>
+    useEffect(() => {
+        const findInstituteIdAndFetchDepts = async () => {
+            const userStr = localStorage.getItem("user");
+            if (!userStr) {
+                setIsLoading(false);
+                toast({
+                    title: "Authentication Error",
+                    description: "User not found. Please log in again.",
+                    variant: "destructive",
+                });
+                return;
+            }
+            const user = JSON.parse(userStr);
+            const instituteAccountId = user?._id;
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  placeholder="Enter email address"
-                  className="form-input"
-                  required
-                />
-              </div>
+            if (!instituteAccountId) {
+                setIsLoading(false);
+                return;
+            }
 
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                  placeholder="Enter phone number"
-                  className="form-input"
-                  required
-                />
-              </div>
+            try {
+                const res = await api.get("/institutes");
+                const allInstitutes: Institute[] = res.data;
 
-              <div className="space-y-2">
-                <Label htmlFor="department">Department</Label>
-                <Select 
-                  value={formData.department} 
-                  onValueChange={(value) => setFormData({...formData, department: value})}
-                >
-                  <SelectTrigger className="form-select">
-                    <SelectValue placeholder="Select department" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {departments.map((dept) => (
-                      <SelectItem key={dept} value={dept}>{dept}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                const matchingInstitute = allInstitutes.find(
+                    (inst) => inst.institute_acc._id === instituteAccountId
+                );
 
-              <div className="space-y-2">
-                <Label htmlFor="designation">Designation</Label>
-                <Select 
-                  value={formData.designation} 
-                  onValueChange={(value) => setFormData({...formData, designation: value})}
-                >
-                  <SelectTrigger className="form-select">
-                    <SelectValue placeholder="Select designation" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {designations.map((designation) => (
-                      <SelectItem key={designation} value={designation}>{designation}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="experience">Years of Experience</Label>
-                <Input
-                  id="experience"
-                  type="number"
-                  value={formData.experience}
-                  onChange={(e) => setFormData({...formData, experience: parseInt(e.target.value)})}
-                  placeholder="e.g., 10"
-                  className="form-input"
-                  min="0"
-                  max="50"
-                  required
-                />
-              </div>
-
-              <div className="md:col-span-2 space-y-2">
-                <Label htmlFor="specialization">Specialization</Label>
-                <Input
-                  id="specialization"
-                  value={formData.specialization}
-                  onChange={(e) => setFormData({...formData, specialization: e.target.value})}
-                  placeholder="e.g., Data Structures, Algorithms, Machine Learning"
-                  className="form-input"
-                  required
-                />
-              </div>
-
-              <div className="md:col-span-2 flex gap-3">
-                <Button type="submit" className="btn-primary">
-                  {editingFaculty ? "Update Faculty" : "Add Faculty"}
-                </Button>
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={() => {
-                    setShowAddForm(false);
-                    setEditingFaculty(null);
-                    setFormData({
-                      name: "",
-                      email: "",
-                      phone: "",
-                      department: "",
-                      designation: "",
-                      specialization: "",
-                      experience: 0
+                if (matchingInstitute) {
+                    setActualInstituteId(matchingInstitute._id);
+                    await fetchDepartments(matchingInstitute._id);
+                } else {
+                    toast({
+                        title: "Error",
+                        description:
+                            "Could not find a matching institute for your account.",
+                        variant: "destructive",
                     });
-                  }}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      )}
+                    setIsLoading(false);
+                }
+            } catch (error) {
+                toast({
+                    title: "Error",
+                    description: "Failed to verify institute data.",
+                    variant: "destructive",
+                });
+                setIsLoading(false);
+            }
+        };
 
-      {/* Faculty Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {faculties.map((faculty) => (
-          <Card key={faculty.id} className="card-elevated hover:scale-105 transition-transform duration-200">
-            <CardHeader className="pb-4">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <CardTitle className="text-lg">{faculty.name}</CardTitle>
-                  <p className="text-muted-foreground text-sm mt-1">{faculty.department}</p>
-                </div>
-                <span className={`px-2 py-1 rounded-md text-xs font-medium ${getDesignationColor(faculty.designation)}`}>
-                  {faculty.designation}
-                </span>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-sm">
-                  <Mail className="w-4 h-4 text-muted-foreground" />
-                  <span className="truncate">{faculty.email}</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Phone className="w-4 h-4 text-muted-foreground" />
-                  <span>{faculty.phone}</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Award className="w-4 h-4 text-muted-foreground" />
-                  <span>{faculty.experience} years experience</span>
-                </div>
-                <div className="text-sm">
-                  <p className="text-muted-foreground font-medium mb-1">Specialization:</p>
-                  <p className="text-foreground">{faculty.specialization}</p>
-                </div>
-              </div>
+        findInstituteIdAndFetchDepts();
+    }, [fetchDepartments, toast]);
 
-              <div className="flex gap-2 mt-4">
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  onClick={() => handleEdit(faculty)}
-                  className="flex-1"
-                >
-                  <Edit className="w-4 h-4 mr-1" />
-                  Edit
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  onClick={() => handleDelete(faculty.id)}
-                  className="text-destructive hover:text-destructive-foreground hover:bg-destructive"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+    // --- Event Handlers ---
 
-      {faculties.length === 0 && (
-        <Card className="card-flat">
-          <CardContent className="text-center py-12">
-            <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-foreground mb-2">No Faculty Found</h3>
-            <p className="text-muted-foreground mb-4">Get started by adding your first faculty member.</p>
-            <Button onClick={() => setShowAddForm(true)} className="btn-primary">
-              <Plus className="w-4 h-4 mr-2" />
-              Add First Faculty
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  );
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!actualInstituteId) {
+            toast({
+                title: "Error",
+                description: "Institute ID not found. Cannot save department.",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        try {
+            if (editingDepartment) {
+                const payload = {
+                    name: formData.name,
+                    instituteId: actualInstituteId,
+                };
+                await api.put(`/departments/${editingDepartment._id}`, payload);
+                toast({
+                    title: "Success",
+                    description: "Department updated successfully.",
+                });
+            } else {
+                const departmentPayload = {
+                    name: formData.name,
+                    instituteId: actualInstituteId,
+                };
+                const departmentResponse = await api.post(
+                    "/departments",
+                    departmentPayload
+                );
+                const newDepartmentId = departmentResponse.data._id;
+
+                const hodPayload = {
+                    name: formData.hodName,
+                    email: formData.hodEmail,
+                    password: formData.hodPassword,
+                    departmentId: newDepartmentId,
+                };
+                await api.post("/hods", hodPayload);
+
+                toast({
+                    title: "Success",
+                    description:
+                        "Department and HOD account created successfully.",
+                });
+            }
+            resetForm();
+            if (actualInstituteId) await fetchDepartments(actualInstituteId);
+        } catch (error: any) {
+            const errorMessage =
+                error.response?.data?.message || "Failed to save department.";
+            toast({
+                title: "Error",
+                description: errorMessage,
+                variant: "destructive",
+            });
+        }
+    };
+
+    const handleDelete = async (departmentId: string) => {
+        try {
+            await api.delete(`/departments/${departmentId}`);
+            setDepartments(departments.filter((d) => d._id !== departmentId));
+            toast({
+                title: "Success",
+                description: "Department and associated HOD deleted.",
+            });
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Failed to delete department.",
+                variant: "destructive",
+            });
+        }
+    };
+
+    const resetForm = () => {
+        setFormData(initialFormData);
+        setEditingDepartment(null);
+        setShowAddForm(false); // Use the reverted state setter
+    };
+
+    const handleEdit = (department: Department) => {
+        setEditingDepartment(department);
+        setFormData({ ...initialFormData, name: department.name });
+        setShowAddForm(true); // Use the reverted state setter
+    };
+
+    const handleAddNew = () => {
+        setEditingDepartment(null);
+        setFormData(initialFormData);
+        setShowAddForm(true); // Use the reverted state setter
+    };
+
+    // --- Render Logic ---
+
+    return (
+        <div className="space-y-6 p-4 md:p-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold text-foreground">
+                        Departments
+                    </h1>
+                    <p className="text-muted-foreground">
+                        Manage your institute's academic departments and their
+                        heads.
+                    </p>
+                </div>
+                <Button onClick={handleAddNew}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Department
+                </Button>
+            </div>
+
+            {/* --- Add/Edit Form Card (Reverted UI) --- */}
+            {showAddForm && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle>
+                            {editingDepartment
+                                ? "Edit Department"
+                                : "Add New Department & HOD"}
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="name">Department Name</Label>
+                                <Input
+                                    id="name"
+                                    value={formData.name}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            name: e.target.value,
+                                        })
+                                    }
+                                    placeholder="e.g., Computer Engineering"
+                                    required
+                                />
+                            </div>
+
+                            {!editingDepartment && (
+                                <>
+                                    <div className="border-t pt-4">
+                                        <Label className="text-lg font-semibold">
+                                            HOD Account Details
+                                        </Label>
+                                        <p className="text-xs text-muted-foreground">
+                                            Create a user account for the Head
+                                            of Department.
+                                        </p>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="hodName">
+                                            HOD Full Name
+                                        </Label>
+                                        <Input
+                                            id="hodName"
+                                            value={formData.hodName}
+                                            onChange={(e) =>
+                                                setFormData({
+                                                    ...formData,
+                                                    hodName: e.target.value,
+                                                })
+                                            }
+                                            placeholder="e.g., Dr. Alan Turing"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="hodEmail">
+                                            HOD Email
+                                        </Label>
+                                        <Input
+                                            id="hodEmail"
+                                            type="email"
+                                            value={formData.hodEmail}
+                                            onChange={(e) =>
+                                                setFormData({
+                                                    ...formData,
+                                                    hodEmail: e.target.value,
+                                                })
+                                            }
+                                            placeholder="hod@institute.com"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="hodPassword">
+                                            Password
+                                        </Label>
+                                        <Input
+                                            id="hodPassword"
+                                            type="password"
+                                            value={formData.hodPassword}
+                                            onChange={(e) =>
+                                                setFormData({
+                                                    ...formData,
+                                                    hodPassword: e.target.value,
+                                                })
+                                            }
+                                            placeholder="Enter a secure password"
+                                            required
+                                        />
+                                    </div>
+                                </>
+                            )}
+
+                            <div className="flex gap-3 pt-4">
+                                <Button type="submit">
+                                    {editingDepartment
+                                        ? "Save Changes"
+                                        : "Create Department"}
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={resetForm}
+                                >
+                                    Cancel
+                                </Button>
+                            </div>
+                        </form>
+                    </CardContent>
+                </Card>
+            )}
+
+            {/* --- Department Cards Grid --- */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {isLoading
+                    ? Array.from({ length: 6 }).map((_, i) => (
+                          <Skeleton key={i} className="h-48 rounded-lg" />
+                      ))
+                    : departments.map((dept) => (
+                          <Card
+                              key={dept._id}
+                              className="hover:shadow-lg transition-shadow"
+                          >
+                              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                                  <CardTitle className="text-xl font-bold">
+                                      {dept.name}
+                                  </CardTitle>
+                                  <div className="flex gap-2">
+                                      <Button
+                                          size="icon"
+                                          variant="ghost"
+                                          onClick={() => handleEdit(dept)}
+                                      >
+                                          <Edit className="w-4 h-4" />
+                                      </Button>
+                                      <Dialog>
+                                          <DialogTrigger asChild>
+                                              <Button
+                                                  size="icon"
+                                                  variant="ghost"
+                                                  className="text-red-500 hover:text-red-600"
+                                              >
+                                                  <Trash2 className="w-4 h-4" />
+                                              </Button>
+                                          </DialogTrigger>
+                                          <DialogContent className="bg-white">
+                                              <DialogHeader>
+                                                  <DialogTitle>
+                                                      Are you sure?
+                                                  </DialogTitle>
+                                              </DialogHeader>
+                                              <p>
+                                                  This action will permanently
+                                                  delete the{" "}
+                                                  <strong>{dept.name}</strong>{" "}
+                                                  department and its associated
+                                                  HOD account. This cannot be
+                                                  undone.
+                                              </p>
+                                              <DialogFooter>
+                                                  <DialogClose asChild>
+                                                      <Button variant="outline">
+                                                          Cancel
+                                                      </Button>
+                                                  </DialogClose>
+                                                  <DialogClose asChild>
+                                                      <Button
+                                                          variant="destructive"
+                                                          onClick={() =>
+                                                              handleDelete(
+                                                                  dept._id
+                                                              )
+                                                          }
+                                                      >
+                                                          Delete
+                                                      </Button>
+                                                  </DialogClose>
+                                              </DialogFooter>
+                                          </DialogContent>
+                                      </Dialog>
+                                  </div>
+                              </CardHeader>
+                              <CardContent>
+                                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                      <UserCheck className="w-4 h-4" />
+                                      <span>
+                                          HOD:{" "}
+                                          {dept.hod?.name ||
+                                              "Not Assigned"}
+                                      </span>
+                                  </div>
+                              </CardContent>
+                          </Card>
+                      ))}
+            </div>
+
+            {!isLoading && departments.length === 0 && (
+                <div className="col-span-full mt-10">
+                    <Card className="w-full">
+                        <CardContent className="text-center py-12">
+                            <Building className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                            <h3 className="text-xl font-semibold text-foreground mb-2">
+                                No Departments Found
+                            </h3>
+                            <p className="text-muted-foreground mb-4">
+                                Click the button below to add your first
+                                department.
+                            </p>
+                            <Button onClick={handleAddNew}>
+                                <Plus className="w-4 h-4 mr-2" /> Add First
+                                Department
+                            </Button>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
+        </div>
+    );
 };
 
-export default FacultyPage;
+export default DepartmentPage;
