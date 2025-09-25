@@ -14,26 +14,27 @@ import {
 import Header from "@/components/Layout/Header";
 import { Mail, Lock, User, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import api from "@/lib/api";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [userType, setUserType] = useState("");
+    // const [userType, setUserType] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const { toast } = useToast();
 
-    const userTypes = [
-        { value: "institute", label: "Institute Admin" },
-        { value: "hod", label: "Head of Department" },
-        { value: "dep-admin", label: "Department Admin" },
-        { value: "faculty", label: "Faculty Member" },
-    ];
+    // const userTypes = [
+    //     { value: "institute", label: "Institute Admin" },
+    //     { value: "hod", label: "Head of Department" },
+    //     { value: "dep-admin", label: "Department Admin" },
+    //     { value: "faculty", label: "Faculty Member" },
+    // ];
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!email || !password || !userType) {
+        if (!email || !password) {
             toast({
                 title: "Missing Information",
                 description: "Please fill in all fields",
@@ -44,18 +45,26 @@ const Login = () => {
 
         setIsLoading(true);
 
-        // Simulate login process
-        setTimeout(() => {
-            setIsLoading(false);
-            toast({
-                title: "Login Successful",
-                description: `Welcome back! Redirecting to dashboard...`,
-                className: "bg-green-300",
-            });
+        try {
+            const response = await api.post("/auth/login", { email, password });
 
-            // Navigate to dashboard with user role
-            navigate(`/dashboard?role=${userType}`);
-        }, 1500);
+            // Assuming the backend returns a token and user data in response.data
+            const { token, user } = response.data;
+
+            localStorage.setItem("token", token);
+            localStorage.setItem("user", JSON.stringify(user));
+
+            navigate("/dashboard");
+        } catch (err: any) {
+            // Axios wraps the error response in err.response
+            const errorMessage =
+                err.response?.data?.message ||
+                err.message ||
+                "Something went wrong";
+            console.error(errorMessage);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -128,7 +137,7 @@ const Login = () => {
                                     </div>
                                 </div>
 
-                                {/* User Type */}
+                                {/* User Type
                                 <div className="space-y-2">
                                     <Label
                                         htmlFor="userType"
@@ -154,7 +163,7 @@ const Login = () => {
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                </div>
+                                </div> */}
 
                                 {/* Submit Button */}
                                 <Button
