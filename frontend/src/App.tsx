@@ -10,6 +10,9 @@ import DashboardHome from "./pages/Dashboard/DashboardHome";
 import TimetablePage from "./pages/Dashboard/TimetablePage";
 import SubjectsPage from "./pages/Dashboard/SubjectsPage";
 import FacultyPage from "./pages/Dashboard/FacultyPage";
+import InstitutePage from "./pages/Dashboard/InstitutePage";
+import DepartmentPage from "./pages/Dashboard/DepartmentPage";
+import RoomPage from "./pages/Dashboard/RoomPage";
 import ApprovalRequestsPage from "./pages/Dashboard/ApprovalRequestsPage";
 import GenerateTimetablePage from "./pages/Dashboard/GenerateTimetablePage";
 import NotFound from "./pages/NotFound";
@@ -37,6 +40,15 @@ const App = () => (
                             />
                             <Route path="subjects" element={<SubjectsPage />} />
                             <Route path="faculty" element={<FacultyPage />} />
+                            <Route
+                                path="institute"
+                                element={<InstitutePage />}
+                            />
+                            <Route
+                                path="department"
+                                element={<DepartmentPage />}
+                            />
+                            <Route path="classrooms" element={<RoomPage />} />
                             <Route
                                 path="approvals"
                                 element={<ApprovalRequestsPage />}
