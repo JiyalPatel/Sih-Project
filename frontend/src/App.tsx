@@ -17,6 +17,7 @@ import ApprovalRequestsPage from "./pages/Dashboard/ApprovalRequestsPage";
 import GenerateTimetablePage from "./pages/Dashboard/GenerateTimetablePage";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import BatchPage from "./pages/Dashboard/BatchPage";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,10 @@ const App = () => (
                             <Route
                                 path="timetable"
                                 element={<TimetablePage />}
+                            />
+                            <Route
+                                path="batches"
+                                element={<BatchPage />}
                             />
                             <Route path="subjects" element={<SubjectsPage />} />
                             <Route path="faculty" element={<FacultyPage />} />

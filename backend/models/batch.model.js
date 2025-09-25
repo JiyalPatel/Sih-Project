@@ -6,14 +6,21 @@ const batchSchema = new mongoose.Schema(
         sem: { type: Number, required: true },
         strength: { type: Number, required: true },
 
+        // Department relationship
+        department: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Department",
+            required: true,
+        },
+
         // subjects linked to this batch
         subjects: [{ type: mongoose.Schema.Types.ObjectId, ref: "Subject" }],
 
         // Available Days
         avail_days: {
             type: [String],
-            enum: ["mon", "tues", "wed", "thurs", "fri", "sat", "sun"],
-            default: ["mon", "tues", "wed", "thurs", "fri", "sat"],
+            enum: ["mon", "tue", "wed", "thu", "fri", "sat", "sun"],
+            default: ["mon", "tue", "wed", "thu", "fri", "sat"],
         },
 
         // Available Slots
