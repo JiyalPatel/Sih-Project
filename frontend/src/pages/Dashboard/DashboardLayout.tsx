@@ -5,7 +5,6 @@ const DashboardLayout = () => {
     // Get the user from localStorage and provide a fallback
     const user = JSON.parse(localStorage.getItem("user") || "{}");
     let userRole = user.role || "guest"; // Default to 'guest' or another role if not found
-    userRole = "faculty"; // Temporary hardcode for testing
     return (
         <div className="min-h-screen bg-background">
             <div className="flex w-full">
