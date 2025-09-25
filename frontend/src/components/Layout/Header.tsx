@@ -1,14 +1,15 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Search, User } from "lucide-react";
+import { GraduationCap, Search, User, LayoutDashboard } from "lucide-react";
 
 interface HeaderProps {
   showAuth?: boolean;
   showSearch?: boolean;
   title?: string;
+  showDashboard?: boolean;
 }
 
-const Header = ({ showAuth = true, showSearch = false, title }: HeaderProps) => {
+const Header = ({ showAuth = true, showDashboard = false, showSearch = false, title }: HeaderProps) => {
   return (
     <header className="bg-card border-b border-border shadow-soft">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -55,6 +56,22 @@ const Header = ({ showAuth = true, showSearch = false, title }: HeaderProps) => 
             </Link>
           </div>
         )}
+
+        
+        {/* Dashboard Buttons */}
+        {showDashboard && (
+          <div className="flex items-center gap-3">
+            <Link to="/dashboard">
+              <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <LayoutDashboard className="w-4 h-4" />
+                Dashboard
+              </Button>
+            </Link>
+          </div>
+        )}
+
+
+
       </div>
     </header>
   );

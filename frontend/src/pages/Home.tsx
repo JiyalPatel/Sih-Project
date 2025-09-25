@@ -44,9 +44,12 @@ const Home = () => {
     }
   };
 
+    const isLoggedIn = !!localStorage.getItem("token");
+
+
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <Header showAuth={!isLoggedIn} showDashboard={isLoggedIn} />
       
       {/* Hero Section */}
       <section className="relative py-20 px-4 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5">
