@@ -15,6 +15,7 @@ import Header from "@/components/Layout/Header";
 import { Mail, Lock, User, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import api from "@/lib/api";
+import { log } from "console";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -49,10 +50,12 @@ const Login = () => {
             const response = await api.post("/auth/login", { email, password });
 
             // Assuming the backend returns a token and user data in response.data
-            const { token, user } = response.data;
+            const fetchedData = response.data;
 
-            localStorage.setItem("token", token);
-            localStorage.setItem("user", JSON.stringify(user));
+            localStorage.setItem("token", fetchedData.token);
+
+            const { token, ...userToStore } = fetchedData;
+            localStorage.setItem("user", JSON.stringify(userToStore));
 
             navigate("/dashboard");
         } catch (err: any) {

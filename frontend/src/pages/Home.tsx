@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Header from "@/components/Layout/Header";
 import TimetableGrid from "@/components/Timetable/TimetableGrid";
 import { ChevronRight, MapPin, GraduationCap, Calendar } from "lucide-react";
+
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [selectedInstitute, setSelectedInstitute] = useState("");
@@ -44,12 +46,20 @@ const Home = () => {
     }
   };
 
-    const isLoggedIn = !!localStorage.getItem("token");
+  const navigate = useNavigate();
 
+
+      useEffect(() => {
+          const token = localStorage.getItem("token");
+          if (token) {
+              navigate("/dashboard");
+          }
+      }, [navigate]);
+  
 
   return (
     <div className="min-h-screen bg-background">
-      <Header showAuth={!isLoggedIn} showDashboard={isLoggedIn} />
+      <Header />
       
       {/* Hero Section */}
       <section className="relative py-20 px-4 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5">
