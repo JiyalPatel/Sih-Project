@@ -192,6 +192,10 @@ const SubjectsPage = () => {
             return;
         }
 
+        if(formData.isLab){
+            formData.subjectCode = formData.subjectCode + "-LAB"
+        }
+
         const payload = {
             ...formData,
             faculty: formData.faculty || undefined, // Send undefined if no faculty is selected, so it's excluded from the payload
@@ -542,7 +546,7 @@ const SubjectsPage = () => {
                                                   <Trash2 className="w-4 h-4" />
                                               </Button>
                                           </DialogTrigger>
-                                          <DialogContent>
+                                          <DialogContent className="bg-white">
                                               <DialogHeader>
                                                   <DialogTitle>
                                                       Are you sure?
