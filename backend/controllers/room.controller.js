@@ -1,6 +1,7 @@
-const Room = require("../models/room.model.js");
+// backend/controllers/room.controller.js
+const Room = require("../models/room.model");
 
-// Create room
+// ➤ Create room
 const createRoom = async (req, res) => {
     try {
         const room = await Room.create(req.body);
@@ -10,20 +11,20 @@ const createRoom = async (req, res) => {
     }
 };
 
-// Get all rooms
+// ➤ Get all rooms
 const getRooms = async (req, res) => {
     try {
-        const rooms = await Room.find();
+        const rooms = await Room.find().populate("department");
         res.json(rooms);
     } catch (err) {
         res.status(500).json({ msg: err.message });
     }
 };
 
-// Get room by ID
+// ➤ Get room by ID
 const getRoomById = async (req, res) => {
     try {
-        const room = await Room.findById(req.params.id);
+        const room = await Room.findById(req.params.id).populate("department");
         if (!room) return res.status(404).json({ msg: "Room not found" });
         res.json(room);
     } catch (err) {
@@ -31,12 +32,10 @@ const getRoomById = async (req, res) => {
     }
 };
 
-// Update room
+// ➤ Update room
 const updateRoom = async (req, res) => {
     try {
-        const room = await Room.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-        });
+        const room = await Room.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!room) return res.status(404).json({ msg: "Room not found" });
         res.json(room);
     } catch (err) {
@@ -44,7 +43,7 @@ const updateRoom = async (req, res) => {
     }
 };
 
-// Delete room
+// ➤ Delete room
 const deleteRoom = async (req, res) => {
     try {
         const room = await Room.findByIdAndDelete(req.params.id);

@@ -1,292 +1,240 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Edit, Trash2, Users, Mail, Phone, Award } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
+import { Plus, Edit, Trash2, Building2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import api from "@/lib/api"; // <-- shared axios instance (with baseURL etc.)
 
-interface Faculty {
-  id: string;
+interface Department {
+  _id: string;
   name: string;
-  email: string;
-  phone: string;
-  department: string;
-  designation: string;
-  specialization: string;
-  experience: number;
 }
 
-const FacultyPage = () => {
-  const { toast } = useToast();
-  const [faculties, setFaculties] = useState<Faculty[]>([
-    {
-      id: "1",
-      name: "Dr. John Smith",
-      email: "john.smith@university.edu",
-      phone: "+1-234-567-8901",
-      department: "Computer Science",
-      designation: "Professor",
-      specialization: "Data Structures, Algorithms",
-      experience: 15
-    },
-    {
-      id: "2",
-      name: "Dr. Sarah Johnson",
-      email: "sarah.johnson@university.edu",
-      phone: "+1-234-567-8902",
-      department: "Computer Science",
-      designation: "Associate Professor",
-      specialization: "Database Systems, Data Mining",
-      experience: 12
-    },
-    {
-      id: "3",
-      name: "Prof. Michael Davis",
-      email: "michael.davis@university.edu",
-      phone: "+1-234-567-8903",
-      department: "Information Technology",
-      designation: "Assistant Professor",
-      specialization: "Web Development, UI/UX",
-      experience: 8
-    }
-  ]);
+interface Room {
+  _id: string;
+  name: string;
+  classNum: string;
+  type: "lab" | "lecture";
+  capacity: number;
+  department?: Department;
+  avail_days: string[];
+  avail_slots: string[];
+}
 
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [editingFaculty, setEditingFaculty] = useState<Faculty | null>(null);
-  const [formData, setFormData] = useState({
+const daysOptions = ["mon", "tue", "wed", "thu", "fri", "sat"];
+const slotsOptions = ["1", "2", "3", "4", "5", "6", "7", "8"];
+
+export default function RoomPage() {
+  const { toast } = useToast();
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [editingRoom, setEditingRoom] = useState<Room | null>(null);
+
+  const [form, setForm] = useState({
     name: "",
-    email: "",
-    phone: "",
+    classNum: "",
+    type: "",
+    capacity: 0,
     department: "",
-    designation: "",
-    specialization: "",
-    experience: 0
+    avail_days: [...daysOptions],
+    avail_slots: [...slotsOptions],
   });
 
-  const departments = ["Computer Science", "Information Technology", "Electronics", "Mechanical"];
-  const designations = ["Professor", "Associate Professor", "Assistant Professor", "Lecturer"];
+  // ---- Fetch all rooms + departments ----
+  useEffect(() => {
+    fetchRooms();
+    fetchDepartments();
+  }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const fetchRooms = async () => {
+    try {
+      const res = await api.get("/rooms");
+      setRooms(res.data);
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
+  };
+
+  const fetchDepartments = async () => {
+    try {
+      const res = await api.get("/departments");
+      setDepartments(res.data);
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
+  };
+
+  // ---- Handlers ----
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (editingFaculty) {
-      setFaculties(faculties.map(faculty => 
-        faculty.id === editingFaculty.id 
-          ? { ...editingFaculty, ...formData }
-          : faculty
-      ));
-      toast({
-        title: "Faculty Updated",
-        description: "Faculty member has been updated successfully.",
-      });
-      setEditingFaculty(null);
-    } else {
-      const newFaculty: Faculty = {
-        id: Date.now().toString(),
-        ...formData
-      };
-      setFaculties([...faculties, newFaculty]);
-      toast({
-        title: "Faculty Added",
-        description: "New faculty member has been added successfully.",
-      });
+    try {
+      if (editingRoom) {
+        await api.put(`/rooms/${editingRoom._id}`, form);
+        toast({ title: "Room Updated", description: "Room updated successfully." });
+      } else {
+        await api.post("/rooms", form);
+        toast({ title: "Room Added", description: "New room created." });
+      }
+      setShowForm(false);
+      setEditingRoom(null);
+      resetForm();
+      fetchRooms();
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
     }
-    
-    setFormData({
+  };
+
+  const handleEdit = (room: Room) => {
+    setEditingRoom(room);
+    setForm({
+      name: room.name,
+      classNum: room.classNum,
+      type: room.type,
+      capacity: room.capacity,
+      department: room.department?._id || "",
+      avail_days: room.avail_days,
+      avail_slots: room.avail_slots,
+    });
+    setShowForm(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await api.delete(`/rooms/${id}`);
+      toast({ title: "Room Deleted", description: "Room removed successfully." });
+      fetchRooms();
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
+  };
+
+  const resetForm = () =>
+    setForm({
       name: "",
-      email: "",
-      phone: "",
+      classNum: "",
+      type: "",
+      capacity: 0,
       department: "",
-      designation: "",
-      specialization: "",
-      experience: 0
+      avail_days: [...daysOptions],
+      avail_slots: [...slotsOptions],
     });
-    setShowAddForm(false);
-  };
-
-  const handleEdit = (faculty: Faculty) => {
-    setEditingFaculty(faculty);
-    setFormData({
-      name: faculty.name,
-      email: faculty.email,
-      phone: faculty.phone,
-      department: faculty.department,
-      designation: faculty.designation,
-      specialization: faculty.specialization,
-      experience: faculty.experience
-    });
-    setShowAddForm(true);
-  };
-
-  const handleDelete = (id: string) => {
-    setFaculties(faculties.filter(faculty => faculty.id !== id));
-    toast({
-      title: "Faculty Deleted",
-      description: "Faculty member has been removed successfully.",
-      variant: "destructive",
-    });
-  };
-
-  const getDesignationColor = (designation: string) => {
-    switch (designation) {
-      case "Professor":
-        return "bg-primary/10 text-primary";
-      case "Associate Professor":
-        return "bg-secondary/10 text-secondary";
-      case "Assistant Professor":
-        return "bg-accent/10 text-accent";
-      case "Lecturer":
-        return "bg-warning/10 text-warning";
-      default:
-        return "bg-muted text-muted-foreground";
-    }
-  };
 
   return (
     <div className="space-y-8">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">ClassRoom Management</h1>
-          <p className="text-muted-foreground">Manage faculty members and their information</p>
+          <h1 className="text-3xl font-bold">Room Management</h1>
+          <p className="text-muted-foreground">
+            Manage classrooms/labs and their availability
+          </p>
         </div>
-        <Button 
-          onClick={() => setShowAddForm(true)}
-          className="btn-primary"
-        >
+        <Button onClick={() => { setShowForm(true); resetForm(); }}>
           <Plus className="w-4 h-4 mr-2" />
-          Add Faculty
+          Add Room
         </Button>
       </div>
 
       {/* Add/Edit Form */}
-      {showAddForm && (
-        <Card className="card-elevated animate-scale-in">
+      {showForm && (
+        <Card className="p-6">
           <CardHeader>
-            <CardTitle>{editingFaculty ? "Edit Faculty" : "Add New Faculty"}</CardTitle>
+            <CardTitle>{editingRoom ? "Edit Room" : "Add New Room"}</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+              <div>
+                <Label htmlFor="name">Room Name</Label>
                 <Input
                   id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  placeholder="Enter full name"
-                  className="form-input"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
                   required
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
+              <div>
+                <Label htmlFor="classNum">Class Number</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  placeholder="Enter email address"
-                  className="form-input"
+                  id="classNum"
+                  value={form.classNum}
+                  onChange={(e) => setForm({ ...form, classNum: e.target.value })}
                   required
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                  placeholder="Enter phone number"
-                  className="form-input"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="department">Department</Label>
-                <Select 
-                  value={formData.department} 
-                  onValueChange={(value) => setFormData({...formData, department: value})}
+              <div>
+                <Label htmlFor="type">Type</Label>
+                <Select
+                  value={form.type}
+                  onValueChange={(v) => setForm({ ...form, type: v })}
                 >
-                  <SelectTrigger className="form-select">
-                    <SelectValue placeholder="Select department" />
-                  </SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
                   <SelectContent>
-                    {departments.map((dept) => (
-                      <SelectItem key={dept} value={dept}>{dept}</SelectItem>
-                    ))}
+                    <SelectItem value="lab">Lab</SelectItem>
+                    <SelectItem value="lecture">Lecture</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="designation">Designation</Label>
-                <Select 
-                  value={formData.designation} 
-                  onValueChange={(value) => setFormData({...formData, designation: value})}
-                >
-                  <SelectTrigger className="form-select">
-                    <SelectValue placeholder="Select designation" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {designations.map((designation) => (
-                      <SelectItem key={designation} value={designation}>{designation}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="experience">Years of Experience</Label>
+              <div>
+                <Label htmlFor="capacity">Capacity</Label>
                 <Input
-                  id="experience"
+                  id="capacity"
                   type="number"
-                  value={formData.experience}
-                  onChange={(e) => setFormData({...formData, experience: parseInt(e.target.value)})}
-                  placeholder="e.g., 10"
-                  className="form-input"
-                  min="0"
-                  max="50"
+                  value={form.capacity}
+                  onChange={(e) =>
+                    setForm({ ...form, capacity: parseInt(e.target.value) || 0 })
+                  }
                   required
                 />
               </div>
 
-              <div className="md:col-span-2 space-y-2">
-                <Label htmlFor="specialization">Specialization</Label>
-                <Input
-                  id="specialization"
-                  value={formData.specialization}
-                  onChange={(e) => setFormData({...formData, specialization: e.target.value})}
-                  placeholder="e.g., Data Structures, Algorithms, Machine Learning"
-                  className="form-input"
-                  required
-                />
+              <div>
+                <Label htmlFor="department">Department</Label>
+                <Select
+                  value={form.department}
+                  onValueChange={(v) => setForm({ ...form, department: v })}
+                >
+                  <SelectTrigger><SelectValue placeholder="Select department" /></SelectTrigger>
+                  <SelectContent>
+                    {departments.map((d) => (
+                      <SelectItem key={d._id} value={d._id}>
+                        {d.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
-              <div className="md:col-span-2 flex gap-3">
-                <Button type="submit" className="btn-primary">
-                  {editingFaculty ? "Update Faculty" : "Add Faculty"}
+              {/* You can later add multi-select UI for days/slots if needed */}
+
+              <div className="md:col-span-2 flex gap-3 mt-4">
+                <Button type="submit">
+                  {editingRoom ? "Update Room" : "Add Room"}
                 </Button>
-                <Button 
-                  type="button" 
-                  variant="outline" 
+                <Button
+                  type="button"
+                  variant="outline"
                   onClick={() => {
-                    setShowAddForm(false);
-                    setEditingFaculty(null);
-                    setFormData({
-                      name: "",
-                      email: "",
-                      phone: "",
-                      department: "",
-                      designation: "",
-                      specialization: "",
-                      experience: 0
-                    });
+                    setShowForm(false);
+                    setEditingRoom(null);
+                    resetForm();
                   }}
                 >
                   Cancel
@@ -297,56 +245,34 @@ const FacultyPage = () => {
         </Card>
       )}
 
-      {/* Faculty Grid */}
+      {/* Rooms List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {faculties.map((faculty) => (
-          <Card key={faculty.id} className="card-elevated hover:scale-105 transition-transform duration-200">
-            <CardHeader className="pb-4">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <CardTitle className="text-lg">{faculty.name}</CardTitle>
-                  <p className="text-muted-foreground text-sm mt-1">{faculty.department}</p>
-                </div>
-                <span className={`px-2 py-1 rounded-md text-xs font-medium ${getDesignationColor(faculty.designation)}`}>
-                  {faculty.designation}
-                </span>
+        {rooms.map((room) => (
+          <Card key={room._id} className="hover:shadow-md transition">
+            <CardHeader>
+              <div className="flex justify-between">
+                <CardTitle>{room.name}</CardTitle>
+                <span className="text-sm text-muted-foreground">{room.type}</span>
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-sm">
-                  <Mail className="w-4 h-4 text-muted-foreground" />
-                  <span className="truncate">{faculty.email}</span>
+            <CardContent className="space-y-2 text-sm">
+              <div>Class #: {room.classNum}</div>
+              <div>Capacity: {room.capacity}</div>
+              {room.department && (
+                <div className="flex items-center gap-1">
+                  <Building2 className="w-4 h-4 text-muted-foreground" />
+                  {room.department.name}
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Phone className="w-4 h-4 text-muted-foreground" />
-                  <span>{faculty.phone}</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Award className="w-4 h-4 text-muted-foreground" />
-                  <span>{faculty.experience} years experience</span>
-                </div>
-                <div className="text-sm">
-                  <p className="text-muted-foreground font-medium mb-1">Specialization:</p>
-                  <p className="text-foreground">{faculty.specialization}</p>
-                </div>
-              </div>
-
+              )}
               <div className="flex gap-2 mt-4">
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  onClick={() => handleEdit(faculty)}
-                  className="flex-1"
-                >
-                  <Edit className="w-4 h-4 mr-1" />
-                  Edit
+                <Button size="sm" variant="outline" onClick={() => handleEdit(room)}>
+                  <Edit className="w-4 h-4 mr-1" /> Edit
                 </Button>
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   variant="outline"
-                  onClick={() => handleDelete(faculty.id)}
-                  className="text-destructive hover:text-destructive-foreground hover:bg-destructive"
+                  onClick={() => handleDelete(room._id)}
+                  className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -356,21 +282,13 @@ const FacultyPage = () => {
         ))}
       </div>
 
-      {faculties.length === 0 && (
-        <Card className="card-flat">
-          <CardContent className="text-center py-12">
-            <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-foreground mb-2">No Faculty Found</h3>
-            <p className="text-muted-foreground mb-4">Get started by adding your first faculty member.</p>
-            <Button onClick={() => setShowAddForm(true)} className="btn-primary">
-              <Plus className="w-4 h-4 mr-2" />
-              Add First Faculty
-            </Button>
+      {rooms.length === 0 && (
+        <Card>
+          <CardContent className="py-10 text-center text-muted-foreground">
+            No rooms found. Add your first room to get started.
           </CardContent>
         </Card>
       )}
     </div>
   );
-};
-
-export default FacultyPage;
+}
