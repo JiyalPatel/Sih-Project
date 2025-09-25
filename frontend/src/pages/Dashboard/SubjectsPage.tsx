@@ -1,388 +1,611 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Edit, Trash2, BookOpen, Clock, Users } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    DialogFooter,
+    DialogClose,
+} from "@/components/ui/dialog";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import {
+    Plus,
+    Edit,
+    Trash2,
+    BookOpen,
+    Users,
+    Hash,
+    Clock,
+    Star,
+    Building,
+} from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import api from "@/lib/api";
+import { Skeleton } from "@/components/ui/skeleton";
 
-interface Subject {
-  id: string;
-  name: string;
-  code: string;
-  department: string;
-  semester: string;
-  credits: number;
-  type: "theory" | "lab" | "tutorial";
-  faculty: string;
+// --- Interfaces to match backend models & populated data ---
+interface Department {
+    _id: string;
+    name: string;
+    institute: { _id: string };
 }
 
-const SubjectsPage = () => {
-  const { toast } = useToast();
-  const [subjects, setSubjects] = useState<Subject[]>([
-    {
-      id: "1",
-      name: "Data Structures and Algorithms",
-      code: "CS201",
-      department: "Computer Science",
-      semester: "3",
-      credits: 4,
-      type: "theory",
-      faculty: "Dr. Smith"
-    },
-    {
-      id: "2",
-      name: "Database Management Lab",
-      code: "CS202L",
-      department: "Computer Science",
-      semester: "3",
-      credits: 2,
-      type: "lab",
-      faculty: "Dr. Johnson"
-    },
-    {
-      id: "3",
-      name: "Web Development",
-      code: "CS301",
-      department: "Computer Science",
-      semester: "5",
-      credits: 3,
-      type: "theory",
-      faculty: "Prof. Davis"
-    }
-  ]);
+interface Faculty {
+    _id: string;
+    fac_acc: {
+        _id: string;
+        name: string;
+    };
+    institute: string;
+}
 
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [editingSubject, setEditingSubject] = useState<Subject | null>(null);
-  const [formData, setFormData] = useState<{
+interface Subject {
+    _id: string;
     name: string;
-    code: string;
-    department: string;
-    semester: string;
+    subjectCode: string;
+    semester: number;
+    isLab: boolean;
     credits: number;
-    type: "theory" | "lab" | "tutorial";
-    faculty: string;
-  }>({
-    name: "",
-    code: "",
-    department: "",
-    semester: "",
-    credits: 0,
-    type: "theory",
-    faculty: ""
-  });
+    hours_per_week: number;
+    department: string // Populated from Department model
+    faculty?: Faculty; // Optional and populated
+}
 
-  const departments = ["Computer Science", "Information Technology", "Electronics", "Mechanical"];
-  const semesters = ["1", "2", "3", "4", "5", "6", "7", "8"];
-  const subjectTypes = ["theory", "lab", "tutorial"];
+interface Institute {
+    _id: string;
+    institute_acc: {
+        _id: string;
+    };
+}
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (editingSubject) {
-      setSubjects(subjects.map(subject => 
-        subject.id === editingSubject.id 
-          ? { ...editingSubject, ...formData }
-          : subject
-      ));
-      toast({
-        title: "Subject Updated",
-        description: "Subject has been updated successfully.",
-      });
-      setEditingSubject(null);
-    } else {
-      const newSubject: Subject = {
-        id: Date.now().toString(),
-        ...formData
-      };
-      setSubjects([...subjects, newSubject]);
-      toast({
-        title: "Subject Added",
-        description: "New subject has been added successfully.",
-      });
-    }
-    
-    setFormData({
-      name: "",
-      code: "",
-      department: "",
-      semester: "",
-      credits: 0,
-      type: "theory",
-      faculty: ""
-    });
-    setShowAddForm(false);
-  };
 
-  const handleEdit = (subject: Subject) => {
-    setEditingSubject(subject);
-    setFormData({
-      name: subject.name,
-      code: subject.code,
-      department: subject.department,
-      semester: subject.semester,
-      credits: subject.credits,
-      type: subject.type,
-      faculty: subject.faculty
-    });
-    setShowAddForm(true);
-  };
 
-  const handleDelete = (id: string) => {
-    setSubjects(subjects.filter(subject => subject.id !== id));
-    toast({
-      title: "Subject Deleted",
-      description: "Subject has been removed successfully.",
-      variant: "destructive",
-    });
-  };
+const SubjectsPage = () => {
+    const { toast } = useToast();
+    const [subjects, setSubjects] = useState<Subject[]>([]);
+    const [departments, setDepartments] = useState<Department[]>([]);
+    const [faculties, setFaculties] = useState<Faculty[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [showForm, setShowForm] = useState(false);
+    const [editingSubject, setEditingSubject] = useState<Subject | null>(null);
+    const [actualInstituteId, setActualInstituteId] = useState<string | null>(
+        null
+    );
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case "theory":
-        return "bg-primary/10 text-primary";
-      case "lab":
-        return "bg-secondary/10 text-secondary";
-      case "tutorial":
-        return "bg-accent/10 text-accent";
-      default:
-        return "bg-muted text-muted-foreground";
-    }
-  };
+    const initialFormData = {
+        name: "",
+        subjectCode: "",
+        department: "",
+        semester: 1,
+        isLab: false,
+        credits: 0,
+        faculty: "",
+        hours_per_week: 0,
+    };
+    const [formData, setFormData] = useState(initialFormData);
 
-  return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Subjects Management</h1>
-          <p className="text-muted-foreground">Manage academic subjects and their details</p>
-        </div>
-        <Button 
-          onClick={() => setShowAddForm(true)}
-          className="btn-primary"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Add Subject
-        </Button>
-      </div>
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const instituteAccountId = user?._id;
 
-      {/* Add/Edit Form */}
-      {showAddForm && (
-        <Card className="card-elevated animate-scale-in">
-          <CardHeader>
-            <CardTitle>{editingSubject ? "Edit Subject" : "Add New Subject"}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="name">Subject Name</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  placeholder="Enter subject name"
-                  className="form-input"
-                  required
-                />
-              </div>
+    // --- Data Fetching and Management ---
 
-              <div className="space-y-2">
-                <Label htmlFor="code">Subject Code</Label>
-                <Input
-                  id="code"
-                  value={formData.code}
-                  onChange={(e) => setFormData({...formData, code: e.target.value})}
-                  placeholder="e.g., CS201"
-                  className="form-input"
-                  required
-                />
-              </div>
+    const fetchData = useCallback(
+        async (instituteId: string) => {
+            setIsLoading(true);
+            try {
+                const [subjectRes, deptRes, facultyRes] = await Promise.all([
+                    api.get(`/subjects`),
+                    api.get(`/departments`),
+                    api.get(`/faculties`),
+                ]);
 
-              <div className="space-y-2">
-                <Label htmlFor="department">Department</Label>
-                <Select 
-                  value={formData.department} 
-                  onValueChange={(value) => setFormData({...formData, department: value})}
-                >
-                  <SelectTrigger className="form-select">
-                    <SelectValue placeholder="Select department" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {departments.map((dept) => (
-                      <SelectItem key={dept} value={dept}>{dept}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                const allSubjects: Subject[] = subjectRes.data;
+                const allDepartments: Department[] = deptRes.data;
+                const allFaculties: Faculty[] = facultyRes.data;
 
-              <div className="space-y-2">
-                <Label htmlFor="semester">Semester</Label>
-                <Select 
-                  value={formData.semester} 
-                  onValueChange={(value) => setFormData({...formData, semester: value})}
-                >
-                  <SelectTrigger className="form-select">
-                    <SelectValue placeholder="Select semester" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {semesters.map((sem) => (
-                      <SelectItem key={sem} value={sem}>Semester {sem}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                const instituteDepartments = allDepartments.filter(
+                    (d) => d.institute._id === instituteId
+                );
+                const instituteFaculties = allFaculties;
 
-              <div className="space-y-2">
-                <Label htmlFor="credits">Credits</Label>
-                <Input
-                  id="credits"
-                  type="number"
-                  value={formData.credits}
-                  onChange={(e) => setFormData({...formData, credits: parseInt(e.target.value)})}
-                  placeholder="e.g., 4"
-                  className="form-input"
-                  min="1"
-                  max="6"
-                  required
-                />
-              </div>
+                const departmentIdSet = new Set(
+                    instituteDepartments.map((d) => d._id)
+                );
+                // A subject belongs to the institute if its department is in the institute's department list
+                const instituteSubjects = allSubjects.filter((s) =>
+                    departmentIdSet.has(s.department)
+                );
 
-              <div className="space-y-2">
-                <Label htmlFor="type">Type</Label>
-                <Select 
-                  value={formData.type} 
-                  onValueChange={(value: "theory" | "lab" | "tutorial") => setFormData({...formData, type: value})}
-                >
-                  <SelectTrigger className="form-select">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {subjectTypes.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type.charAt(0).toUpperCase() + type.slice(1)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                setSubjects(instituteSubjects);
+                setDepartments(instituteDepartments);
+                setFaculties(instituteFaculties);
+            } catch (error) {
+                console.error("Failed to fetch data:", error);
+                toast({
+                    title: "Error",
+                    description: "Could not load required data.",
+                    variant: "destructive",
+                });
+            } finally {
+                setIsLoading(false);
+            }
+        },
+        [toast]
+    );
 
-              <div className="space-y-2">
-                <Label htmlFor="faculty">Faculty</Label>
-                <Input
-                  id="faculty"
-                  value={formData.faculty}
-                  onChange={(e) => setFormData({...formData, faculty: e.target.value})}
-                  placeholder="Enter faculty name"
-                  className="form-input"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                {/* Empty space for alignment */}
-              </div>
-
-              <div className="md:col-span-2 flex gap-3">
-                <Button type="submit" className="btn-primary">
-                  {editingSubject ? "Update Subject" : "Add Subject"}
-                </Button>
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={() => {
-                    setShowAddForm(false);
-                    setEditingSubject(null);
-                    setFormData({
-                      name: "",
-                      code: "",
-                      department: "",
-                      semester: "",
-                      credits: 0,
-                      type: "theory",
-                      faculty: ""
+    useEffect(() => {
+        const findInstituteAndFetchData = async () => {
+            if (!instituteAccountId) {
+                setIsLoading(false);
+                return;
+            }
+            try {
+                const res = await api.get("/institutes");
+                const matchingInstitute = res.data.find(
+                    (inst: Institute) =>
+                        inst.institute_acc._id === instituteAccountId
+                );
+                if (matchingInstitute) {
+                    setActualInstituteId(matchingInstitute._id);
+                    await fetchData(matchingInstitute._id);
+                } else {
+                    toast({
+                        title: "Error",
+                        description:
+                            "Could not find a matching institute for your account.",
+                        variant: "destructive",
                     });
-                  }}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      )}
+                    setIsLoading(false);
+                }
+            } catch (error) {
+                toast({
+                    title: "Error",
+                    description: "Failed to verify institute data.",
+                    variant: "destructive",
+                });
+                setIsLoading(false);
+            }
+        };
+        findInstituteAndFetchData();
+    }, [instituteAccountId, fetchData, toast]);
 
-      {/* Subjects Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {subjects.map((subject) => (
-          <Card key={subject.id} className="card-elevated hover:scale-105 transition-transform duration-200">
-            <CardHeader className="pb-4">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <CardTitle className="text-lg">{subject.name}</CardTitle>
-                  <p className="text-muted-foreground text-sm mt-1">{subject.code}</p>
-                </div>
-                <span className={`px-2 py-1 rounded-md text-xs font-medium ${getTypeColor(subject.type)}`}>
-                  {subject.type}
-                </span>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-sm">
-                  <BookOpen className="w-4 h-4 text-muted-foreground" />
-                  <span>{subject.department}</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Clock className="w-4 h-4 text-muted-foreground" />
-                  <span>Semester {subject.semester} • {subject.credits} Credits</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Users className="w-4 h-4 text-muted-foreground" />
-                  <span>{subject.faculty}</span>
-                </div>
-              </div>
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!formData.department) {
+            toast({
+                title: "Validation Error",
+                description: "Please select a department.",
+                variant: "destructive",
+            });
+            return;
+        }
 
-              <div className="flex gap-2 mt-4">
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  onClick={() => handleEdit(subject)}
-                  className="flex-1"
-                >
-                  <Edit className="w-4 h-4 mr-1" />
-                  Edit
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  onClick={() => handleDelete(subject.id)}
-                  className="text-destructive hover:text-destructive-foreground hover:bg-destructive"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+        const payload = {
+            ...formData,
+            faculty: formData.faculty || undefined, // Send undefined if no faculty is selected, so it's excluded from the payload
+        };
 
-      {subjects.length === 0 && (
-        <Card className="card-flat">
-          <CardContent className="text-center py-12">
-            <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-foreground mb-2">No Subjects Found</h3>
-            <p className="text-muted-foreground mb-4">Get started by adding your first subject.</p>
-            <Button onClick={() => setShowAddForm(true)} className="btn-primary">
-              <Plus className="w-4 h-4 mr-2" />
-              Add First Subject
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  );
+        try {
+            if (editingSubject) {
+                await api.put(`/subjects/${editingSubject._id}`, payload);
+                toast({
+                    title: "Success",
+                    description: "Subject updated successfully.",
+                });
+            } else {
+                await api.post("/subjects", payload);
+                toast({
+                    title: "Success",
+                    description: "Subject created successfully.",
+                });
+            }
+            resetForm();
+            if (actualInstituteId) await fetchData(actualInstituteId);
+        } catch (error: any) {
+            const errorMessage =
+                error.response?.data?.message || "Failed to save subject.";
+            toast({
+                title: "Error",
+                description: errorMessage,
+                variant: "destructive",
+            });
+        }
+    };
+
+    const handleDelete = async (subjectId: string) => {
+        try {
+            await api.delete(`/subjects/${subjectId}`);
+            setSubjects(subjects.filter((s) => s._id !== subjectId));
+            toast({ title: "Success", description: "Subject deleted." });
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Failed to delete subject.",
+                variant: "destructive",
+            });
+        }
+    };
+
+    const resetForm = () => {
+        setFormData(initialFormData);
+        setEditingSubject(null);
+        setShowForm(false);
+    };
+
+    const handleEdit = (subject: Subject) => {
+        setEditingSubject(subject);
+        setFormData({
+            name: subject.name,
+            subjectCode: subject.subjectCode,
+            department: subject.department,
+            semester: subject.semester,
+            isLab: subject.isLab,
+            credits: subject.credits,
+            faculty: subject.faculty?._id || "",
+            hours_per_week: subject.hours_per_week,
+        });
+        setShowForm(true);
+    };
+
+    const handleAddNew = () => {
+        setEditingSubject(null);
+        setFormData(initialFormData);
+        setShowForm(true);
+    };
+
+    return (
+        <div className="space-y-6 p-4 md:p-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold text-foreground">
+                        Subject Management
+                    </h1>
+                    <p className="text-muted-foreground">
+                        Manage all subjects offered in your institute.
+                    </p>
+                </div>
+                <Button onClick={handleAddNew}>
+                    <Plus className="w-4 h-4 mr-2" /> Add Subject
+                </Button>
+            </div>
+
+            {showForm && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle>
+                            {editingSubject
+                                ? "Edit Subject"
+                                : "Add New Subject"}
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <form
+                            onSubmit={handleSubmit}
+                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                        >
+                            <div className="space-y-2">
+                                <Label htmlFor="name">Subject Name</Label>
+                                <Input
+                                    id="name"
+                                    value={formData.name}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            name: e.target.value,
+                                        })
+                                    }
+                                    placeholder="e.g., Data Structures"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="subjectCode">
+                                    Subject Code
+                                </Label>
+                                <Input
+                                    id="subjectCode"
+                                    value={formData.subjectCode}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            subjectCode: e.target.value,
+                                        })
+                                    }
+                                    placeholder="e.g., CS201"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="department">Department</Label>
+                                <Select
+                                    value={formData.department}
+                                    onValueChange={(value) =>
+                                        setFormData({
+                                            ...formData,
+                                            department: value,
+                                        })
+                                    }
+                                    required
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select Department" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {departments.map((dept) => (
+                                            <SelectItem
+                                                key={dept._id}
+                                                value={dept._id}
+                                            >
+                                                {dept.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="semester">Semester</Label>
+                                <Input
+                                    id="semester"
+                                    type="number"
+                                    value={formData.semester}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            semester:
+                                                parseInt(e.target.value) || 1,
+                                        })
+                                    }
+                                    min="1"
+                                    max="8"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="credits">Credits</Label>
+                                <Input
+                                    id="credits"
+                                    type="number"
+                                    value={formData.credits}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            credits:
+                                                parseInt(e.target.value) || 0,
+                                        })
+                                    }
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="hours_per_week">
+                                    Hours per Week
+                                </Label>
+                                <Input
+                                    id="hours_per_week"
+                                    type="number"
+                                    value={formData.hours_per_week}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            hours_per_week:
+                                                parseInt(e.target.value) || 0,
+                                        })
+                                    }
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="faculty">
+                                    Assign Faculty (Optional)
+                                </Label>
+                                <Select
+                                    value={formData.faculty}
+                                    onValueChange={(value) =>
+                                        setFormData({
+                                            ...formData,
+                                            faculty: value,
+                                        })
+                                    }
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select Faculty" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {faculties.map((fac) => (
+                                            <SelectItem
+                                                key={fac._id}
+                                                value={fac._id}
+                                            >
+                                                {fac.fac_acc.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="flex items-center space-x-2 pt-6">
+                                <Switch
+                                    id="isLab"
+                                    checked={formData.isLab}
+                                    onCheckedChange={(checked) =>
+                                        setFormData({
+                                            ...formData,
+                                            isLab: checked,
+                                        })
+                                    }
+                                />
+                                <Label htmlFor="isLab">
+                                    This is a Lab/Practical Subject
+                                </Label>
+                            </div>
+                            <div className="lg:col-span-3 flex gap-3 pt-4">
+                                <Button type="submit">
+                                    {editingSubject
+                                        ? "Save Changes"
+                                        : "Create Subject"}
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={resetForm}
+                                >
+                                    Cancel
+                                </Button>
+                            </div>
+                        </form>
+                    </CardContent>
+                </Card>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {isLoading
+                    ? Array.from({ length: 6 }).map((_, i) => (
+                          <Skeleton key={i} className="h-56 rounded-lg" />
+                      ))
+                    : subjects.map((subject) => (
+                          <Card
+                              key={subject._id}
+                              className="hover:shadow-lg transition-shadow"
+                          >
+                              <CardHeader>
+                                  <div className="flex justify-between items-start">
+                                      <div>
+                                          <CardTitle>{subject.name}</CardTitle>
+                                          <p className="text-sm text-muted-foreground">
+                                               {departments.find((d) => d._id === subject.department)?.name || "Unknown"}
+                                          </p>
+                                      </div>
+                                      <span
+                                          className={`text-xs font-bold px-2 py-1 rounded-full ${
+                                              subject.isLab
+                                                  ? "bg-blue-100 text-blue-800"
+                                                  : "bg-green-100 text-green-800"
+                                          }`}
+                                      >
+                                          {subject.isLab ? "Lab" : "Theory"}
+                                      </span>
+                                  </div>
+                              </CardHeader>
+                              <CardContent className="space-y-3">
+                                  <div className="flex items-center gap-2 text-sm">
+                                      <Hash className="w-4 h-4 text-muted-foreground" />{" "}
+                                      <span>{subject.subjectCode}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2 text-sm">
+                                      <Users className="w-4 h-4 text-muted-foreground" />{" "}
+                                      <span>
+                                          Faculty:{" "}
+                                          {subject.faculty?.fac_acc.name ||
+                                              "Not Assigned"}
+                                      </span>
+                                  </div>
+                                  <div className="flex items-center gap-2 text-sm">
+                                      <Clock className="w-4 h-4 text-muted-foreground" />{" "}
+                                      <span>Semester {subject.semester}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2 text-sm">
+                                      <Star className="w-4 h-4 text-muted-foreground" />{" "}
+                                      <span>
+                                          {subject.credits} Credits /{" "}
+                                          {subject.hours_per_week} Hours per
+                                          Week
+                                      </span>
+                                  </div>
+                                  <div className="flex gap-2 pt-4">
+                                      <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={() => handleEdit(subject)}
+                                          className="flex-1"
+                                      >
+                                          <Edit className="w-4 h-4 mr-2" />
+                                          Edit
+                                      </Button>
+                                      <Dialog>
+                                          <DialogTrigger asChild>
+                                              <Button
+                                                  size="icon"
+                                                  variant="destructive"
+                                                  className="bg-red-100 text-red-600 hover:bg-red-600 hover:text-white"
+                                              >
+                                                  <Trash2 className="w-4 h-4" />
+                                              </Button>
+                                          </DialogTrigger>
+                                          <DialogContent>
+                                              <DialogHeader>
+                                                  <DialogTitle>
+                                                      Are you sure?
+                                                  </DialogTitle>
+                                              </DialogHeader>
+                                              <p>
+                                                  This will permanently delete
+                                                  the subject{" "}
+                                                  <strong>
+                                                      {subject.name}
+                                                  </strong>
+                                                  . This action cannot be
+                                                  undone.
+                                              </p>
+                                              <DialogFooter>
+                                                  <DialogClose asChild>
+                                                      <Button variant="outline">
+                                                          Cancel
+                                                      </Button>
+                                                  </DialogClose>
+                                                  <DialogClose asChild>
+                                                      <Button
+                                                          variant="destructive"
+                                                          onClick={() =>
+                                                              handleDelete(
+                                                                  subject._id
+                                                              )
+                                                          }
+                                                      >
+                                                          Delete
+                                                      </Button>
+                                                  </DialogClose>
+                                              </DialogFooter>
+                                          </DialogContent>
+                                      </Dialog>
+                                  </div>
+                              </CardContent>
+                          </Card>
+                      ))}
+            </div>
+
+            {!isLoading && subjects.length === 0 && (
+                <div className="col-span-full mt-10 text-center">
+                    <Card>
+                        <CardContent className="p-12">
+                            <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                            <h3 className="text-xl font-semibold text-foreground mb-2">
+                                No Subjects Found
+                            </h3>
+                            <p className="text-muted-foreground mb-4">
+                                Click the button below to add your first
+                                subject.
+                            </p>
+                            <Button onClick={handleAddNew}>
+                                <Plus className="w-4 h-4 mr-2" /> Add First
+                                Subject
+                            </Button>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
+        </div>
+    );
 };
 
 export default SubjectsPage;
