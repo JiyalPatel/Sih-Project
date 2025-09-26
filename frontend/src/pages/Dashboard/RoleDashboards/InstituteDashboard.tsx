@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 interface Department {
   _id: string;
   name: string;
-  institute: string;
+  institute: {_id : string};
 }
 
 interface Faculty {
@@ -66,10 +66,13 @@ const InstituteDashboard = () => {
           api.get(`/timetables`),
         ]);
 
+        console.log("Fetched Departments:", deptRes.data);
+        
+
         // Filter each dataset on the client-side based on the institute's account ID
-        const instituteDepartments = deptRes.data.filter((dept: Department) => dept.institute === instituteAccountId);
-        const instituteFaculty = facultyRes.data.filter((fac: Faculty) => fac.institute === instituteAccountId);
-        const instituteTimetables = timetableRes.data.filter((tt: Timetable) => tt.institute === instituteAccountId);
+        const instituteDepartments = deptRes.data;
+        const instituteFaculty = facultyRes.data;
+        const instituteTimetables = timetableRes.data;
 
         setStats({
           departments: instituteDepartments.length,
