@@ -1,33 +1,24 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const timetableSchema = new mongoose.Schema(
-    {
-        batch: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Batch",
-            required: true,
-            unique: true,
-        },
-        slots: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "TimeSlot",
-            },
-        ],
-        generatedBy: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-        },
-        generationDate: {
-            type: Date,
-            default: Date.now,
-        },
-        isPublished: {
-            type: Boolean,
-            default: false,
-        },
-    },
-    { timestamps: true }
-);
+const timetableSchema = new mongoose.Schema({
+  term: {
+    type: String,
+    enum: ['odd', 'even'],
+    required: true,
+  },
+  batch: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Batch',
+    required: true,
+  },
+  timetableData: {
+    type: mongoose.Schema.Types.Mixed, // Allows for flexible, nested JSON structure
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
-module.exports = mongoose.model("Timetable", timetableSchema);
+module.exports = mongoose.model('Timetable', timetableSchema);

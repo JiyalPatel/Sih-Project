@@ -1,9 +1,7 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { generateTimetable } = require('../controllers/scheduler.controller');
-const { protect, authorizeRoles } = require('../middleware/auth.middleware');
+const { generateTimetable } = require("../controllers/scheduler.controller");
 
-// Route to generate the timetable. Only authorized roles can access this.
-router.post('/generate', protect, authorizeRoles('admin', 'institute', 'hod', 'dept-admin'), generateTimetable);
+router.post("/generate", generateTimetable); // function reference, not call
 
 module.exports = router;

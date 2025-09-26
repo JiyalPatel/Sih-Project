@@ -1,15 +1,23 @@
-const express = require('express');
+// backend/routes/batch.routes.js
+const express = require("express");
 const router = express.Router();
-const batchController = require('../controllers/batch.controller');
+const batchController = require("../controllers/batch.controller");
 
-// CRUD
-router.post('/', batchController.createBatch);
-router.get('/', batchController.getBatches);
-router.get('/:id', batchController.getBatchById);
-router.put('/:id', batchController.updateBatch);
-router.delete('/:id', batchController.deleteBatch);
+// ---------- Batch Routes ----------
 
-// Extra: Add Subject to Batch
-router.post('/:id/add-subject', batchController.addSubjectToBatch);
+// Get all batches
+router.get("/", batchController.getBatches);
+
+// Get single batch by ID
+router.get("/:id", batchController.getBatchById);
+
+// Create new batch
+router.post("/", batchController.createBatch);
+
+// Update batch by ID
+router.put("/:id", batchController.updateBatch);
+
+// Delete batch by ID
+router.delete("/:id", batchController.deleteBatch);
 
 module.exports = router;

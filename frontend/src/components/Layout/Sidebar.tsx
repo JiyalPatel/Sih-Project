@@ -17,6 +17,7 @@ import {
   GraduationCap,
   Building,
   ClipboardList,
+  Pen,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -37,6 +38,7 @@ const allNavLinks = [
   { icon: Eye, label: "View Timetable", path: "/dashboard/view-timetable", roles: ["institute", "hod", "dept-admin", "faculty"] },
   // { icon: Settings, label: "Preferences", path: "/dashboard/preferences", roles: ["institute", "hod", "dept-admin", "faculty"] },
   { icon: Zap, label: "Generate Timetable", path: "/dashboard/generate", roles: ["institute", "hod", "dept-admin"] },
+  { icon: Pen, label: "Batches", path: "/dashboard/batches", roles: ["institute", "hod", "dept-admin"] },
 ];
 
 const Sidebar = ({ userRole = "faculty" }: SidebarProps) => {
