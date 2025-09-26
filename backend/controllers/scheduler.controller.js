@@ -1,129 +1,153 @@
-const Department = require('../models/department.model');
-const Faculty = require('../models/faculty.model');
-const Subject = require('../models/subject.model');
-const Room = require('../models/room.model');
-const Timetable = require('../models/timetable.model');
-const Batch = require('../models/batch.model');
-const timetableConstraints = require('../app/v2/Data/timetable_constraints.json');
+const { spawn } = require("child_process");
+const fs = require("fs/promises");
+const path = require("path");
 
-// Helper function to determine the current academic term (odd/even)
-const isOddTerm = () => {
-  const month = new Date().getMonth() + 1; // getMonth() is 0-indexed
-  // Odd term typically runs from July to December
-  return month >= 7 && month <= 12;
-};
+// Import all necessary models
+const Subject = require("../models/subject.model");
+const Faculty = require("../models/faculty.model");
+const Room = require("../models/room.model");
+const Batch = require("../models/batch.model");
+const Timetable = require("../models/timetable.model");
+const { Script } = require("vm");
 
 const generateTimetable = async (req, res) => {
-  try {
-    // 1. Set constraints based on the current term (odd/even)
-    const termType = isOddTerm() ? 'odd' : 'even';
-    if (termType === 'odd') {
-      timetableConstraints.combine_semesters = [1, 3, 5, 7];
-    } else {
-      timetableConstraints.combine_semesters = [2, 4, 6, 8];
-    }
+    try {
+        console.log("Starting timetable generation...");
 
-    // 2. Fetch all required data from the database
-    const departments = await Department.find();
-    const faculties = await Faculty.find();
-    const subjects = await Subject.find();
-    const rooms = await Room.find();
-    // Find the most recent batch to associate the timetable with
-    const latestBatch = await Batch.findOne().sort({ createdAt: -1 });
+        // Using hardcoded data for testing
+        const batches = [
+            { id: "B1", name: "B.Tech Year 1 (Sem 1)", semester: 1, strength: 60, subjects: ["S101", "S102", "S103", "S104"], available_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], available_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "B3", name: "B.Tech Year 2 (Sem 3)", semester: 3, strength: 55, subjects: ["S301", "S302", "S303", "S304"], available_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], available_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "B5", name: "B.Tech Year 3 (Sem 5)", semester: 5, strength: 50, subjects: ["S501", "S502", "S503", "S504"], available_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], available_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "B7", name: "B.Tech Year 4 (Sem 7)", semester: 7, strength: 45, subjects: ["S701", "S702", "S703", "S704"], available_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], available_slots: ["1", "2", "3", "4", "5", "6"] },
+        ];
+        const rooms = [
+            { id: "R1", name: "Lecture Hall A", type: "lecture", capacity: 120, available_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], available_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "R2", name: "Lecture Hall B", type: "lecture", capacity: 100, available_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], available_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "R3", name: "Lecture Hall C", type: "lecture", capacity: 80, available_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], available_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "R4", name: "Lecture Hall D", type: "lecture", capacity: 70, available_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], available_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "R5", name: "Lecture Hall E", type: "lecture", capacity: 90, available_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], available_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "R6", name: "Lecture Hall F", type: "lecture", capacity: 75, available_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], available_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "R7", name: "Lecture Hall G", type: "lecture", capacity: 60, available_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], available_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "L1", name: "Computer Lab 1", type: "lab", capacity: 60, available_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], available_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "L2", name: "Electronics Lab", type: "lab", capacity: 55, available_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], available_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "L3", name: "Physics Lab", type: "lab", capacity: 50, available_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], available_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "L4", name: "Networks Lab", type: "lab", capacity: 45, available_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], available_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "L5", name: "DB Lab", type: "lab", capacity: 40, available_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], available_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "L6", name: "Capstone Lab", type: "lab", capacity: 65, available_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], available_slots: ["1", "2", "3", "4", "5", "6"] },
+        ];
+        const faculty = [
+            { id: "F01", name: "Dr. A. Sharma", subjects: ["S101", "S301"], max_hours_per_week: 18, max_lab_hours: 8, max_lecture_hours: 14, preferred_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], preferred_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "F02", name: "Prof. B. Gupta", subjects: ["S102", "S501", "S701"], max_hours_per_week: 16, max_lab_hours: 10, max_lecture_hours: 12, preferred_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], preferred_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "F03", name: "Dr. C. Iyer", subjects: ["S103", "S303"], max_hours_per_week: 16, max_lab_hours: 6, max_lecture_hours: 12, preferred_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], preferred_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "F04", name: "Dr. D. Mehta", subjects: ["S104", "S304", "S704"], max_hours_per_week: 14, max_lab_hours: 6, max_lecture_hours: 12, preferred_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], preferred_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "F05", name: "Prof. E. Rao", subjects: ["S302", "S503"], max_hours_per_week: 18, max_lab_hours: 8, max_lecture_hours: 14, preferred_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], preferred_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "F06", name: "Dr. F. Khan", subjects: ["S303", "S501"], max_hours_per_week: 14, max_lab_hours: 8, max_lecture_hours: 10, preferred_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], preferred_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "F07", name: "Dr. G. Patel", subjects: ["S504", "S502"], max_hours_per_week: 16, max_lab_hours: 8, max_lecture_hours: 12, preferred_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], preferred_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "F08", name: "Prof. H. Singh", subjects: ["S304", "S701"], max_hours_per_week: 16, max_lab_hours: 8, max_lecture_hours: 12, preferred_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], preferred_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "F09", name: "Dr. I. Desai", subjects: ["S502", "S302"], max_hours_per_week: 14, max_lab_hours: 8, max_lecture_hours: 10, preferred_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], preferred_slots: ["1", "2", "3", "4", "5", "6"] },
+            { id: "F10", name: "Dr. J. Roy", subjects: ["S701", "S702", "S703"], max_hours_per_week: 12, max_lab_hours: 8, max_lecture_hours: 10, preferred_days: ["Mon", "Tue", "Wed", "Thu", "Fri"], preferred_slots: ["1", "2", "3", "4", "5", "6"] },
+        ];
+        const subjects = [
+            { id: "S101", name: "Engineering Mathematics I", lab: false, duration_slots: 1, hours_per_week: 3, semester: 1, },
+            { id: "S102", name: "Introduction to Programming Lab", lab: true, lab_block_size: 2, hours_per_week: 2, semester: 1, },
+            { id: "S103", name: "Physics for Engineers", lab: false, duration_slots: 1, hours_per_week: 3, semester: 1, },
+            { id: "S104", name: "Basic Chemistry", lab: false, duration_slots: 1, hours_per_week: 3, semester: 1, },
+            { id: "S301", name: "Digital Systems Lab", lab: true, lab_block_size: 2, hours_per_week: 2, semester: 3, },
+            { id: "S302", name: "Data Structures and Algorithms", lab: false, duration_slots: 1, hours_per_week: 3, semester: 3, },
+            { id: "S303", name: "Electronic Circuits", lab: false, duration_slots: 1, hours_per_week: 3, semester: 3, },
+            { id: "S304", name: "Signals and Systems", lab: false, duration_slots: 1, hours_per_week: 3, semester: 3, },
+            { id: "S501", name: "Microcontroller Lab", lab: true, lab_block_size: 2, hours_per_week: 2, semester: 5, },
+            { id: "S502", name: "Database Systems Lab", lab: true, lab_block_size: 2, hours_per_week: 2, semester: 5, },
+            { id: "S503", name: "Operating Systems", lab: false, duration_slots: 1, hours_per_week: 3, semester: 5, },
+            { id: "S504", name: "Computer Networks", lab: false, duration_slots: 1, hours_per_week: 3, semester: 5, },
+            { id: "S701", name: "Capstone Project Lab", lab: true, lab_block_size: 2, hours_per_week: 2, semester: 7, },
+            { id: "S702", name: "Advanced Topics in AI", lab: false, duration_slots: 1, hours_per_week: 3, semester: 7, },
+            { id: "S703", name: "Professional Ethics & Management", lab: false, duration_slots: 1, hours_per_week: 2, semester: 7, },
+            { id: "S704", name: "Seminar and Presentation", lab: false, duration_slots: 1, hours_per_week: 1, semester: 7, },
+        ];
 
-    if (!latestBatch) {
-      return res.status(404).json({ message: "No batches found. Please create a batch before generating a timetable." });
-    }
+        const pythonScriptDir = path.join(__dirname, "..", "app", "v2");
+        const dataDir = path.join(pythonScriptDir, "Data");
+        const outputDir = path.join(dataDir, "output");
+        await fs.mkdir(outputDir, { recursive: true });
 
-    // 3. Initialize data structures for scheduling
-    const generatedTimetable = {};
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const timeSlots = ['9:00-10:00', '10:00-11:00', '11:00-12:00', '12:00-1:00', '2:00-3:00', '3:00-4:00', '4:00-5:00'];
+        await Promise.all([
+            fs.writeFile(path.join(dataDir, "subjects.json"), JSON.stringify(subjects, null, 4)),
+            fs.writeFile(path.join(dataDir, "faculty.json"), JSON.stringify(faculty, null, 4)),
+            fs.writeFile(path.join(dataDir, "classrooms.json"), JSON.stringify(rooms, null, 4)),
+            fs.writeFile(path.join(dataDir, "batches.json"), JSON.stringify(batches, null, 4)),
+        ]);
+        
+        console.log("Data files created for Python script.");
 
-    // Availability trackers to prevent clashes
-    const facultyAvailability = {};
-    faculties.forEach(faculty => {
-      facultyAvailability[faculty._id] = {};
-      days.forEach(day => {
-        facultyAvailability[faculty._id][day] = {};
-        timeSlots.forEach(slot => {
-          facultyAvailability[faculty._id][day][slot] = true; // true means available
+        const pythonScriptPath = path.join(pythonScriptDir, "main.py");
+        
+        // *** THIS IS THE KEY CHANGE ***
+        // Set the current working directory for the python script
+        const pythonProcess = spawn("python", [pythonScriptPath], { cwd: pythonScriptDir });
+
+        console.log(pythonProcess);
+        
+
+        let scriptOutput = "";
+        pythonProcess.stdout.on("data", (data) => {
+            console.log(`Python script stdout: ${data}`);
+            scriptOutput += data.toString();
         });
-      });
-    });
 
-    const roomAvailability = {};
-    rooms.forEach(room => {
-      roomAvailability[room._id] = {};
-      days.forEach(day => {
-        roomAvailability[room._id][day] = {};
-        timeSlots.forEach(slot => {
-          roomAvailability[room._id][day][slot] = true; // true means available
-        });
-      });
-    });
+        console.log(scriptOutput);
+        
 
-    // 4. Core Timetable Generation Logic
-    for (const department of departments) {
-      generatedTimetable[department.name] = {};
-      for (const semester of timetableConstraints.combine_semesters) {
-        generatedTimetable[department.name][`Semester ${semester}`] = {};
-        days.forEach(day => {
-          generatedTimetable[department.name][`Semester ${semester}`][day] = {};
-          timeSlots.forEach(slot => {
-            generatedTimetable[department.name][`Semester ${semester}`][day][slot] = null; // Initialize slot as empty
-          });
+        let scriptError = "";
+        pythonProcess.stderr.on("data", (data) => {
+            console.error(`Python script stderr: ${data}`);
+            scriptError += data.toString();
         });
 
-        const semesterSubjects = subjects.filter(s => s.semester === semester && s.department.toString() === department._id.toString());
+        pythonProcess.on("close", async (code) => {
+            console.log(`Python script exited with code ${code}`);
 
-        for (const subject of semesterSubjects) {
-          let placed = false;
-          for (const day of days) {
-            for (const slot of timeSlots) {
-              // Find an available faculty who can teach the subject
-              const assignedFaculty = faculties.find(f => f.subjects.includes(subject._id) && facultyAvailability[f._id][day][slot]);
-              // Find an available room in the department
-              const assignedRoom = rooms.find(r => r.department.toString() === department._id.toString() && r.capacity >= 60 && roomAvailability[r._id][day][slot] && !r.isLab);
-              // Check if the current slot is empty
-              const isSlotFree = generatedTimetable[department.name][`Semester ${semester}`][day][slot] === null;
-
-              if (assignedFaculty && assignedRoom && isSlotFree) {
-                // If all conditions met, place the class in the timetable
-                generatedTimetable[department.name][`Semester ${semester}`][day][slot] = {
-                  subject: subject.name,
-                  faculty: assignedFaculty.name,
-                  room: assignedRoom.name,
-                };
-                // Mark faculty and room as unavailable for this slot
-                facultyAvailability[assignedFaculty._id][day][slot] = false;
-                roomAvailability[assignedRoom._id][day][slot] = false;
-                placed = true;
-                break; // Move to the next subject
-              }
+            if (code !== 0) {
+                return res.status(500).json({ 
+                    message: "Timetable generation failed.",
+                    error: scriptError 
+                });
             }
-            if (placed) break; // Move to the next subject
-          }
-        }
-      }
+
+            const resultPath = path.join(outputDir, "timetable_top_1.json");
+            try {
+                const resultData = await fs.readFile(resultPath, "utf-8");
+                const generatedSlots = JSON.parse(resultData);
+                
+                await Timetable.deleteMany({ institute: req.user.institute });
+
+                const newTimetable = new Timetable({
+                    institute: req.user.institute,
+                    slots: generatedSlots,
+                    generatedAt: new Date(),
+                });
+
+                await newTimetable.save();
+
+                console.log("Timetable generated and saved successfully!");
+                res.status(201).json({
+                    message: "Timetable generated successfully!",
+                    timetable: newTimetable,
+                });
+            } catch (fileError) {
+                console.error("Error reading or processing output file:", fileError);
+                res.status(500).json({
+                    message: "Script ran, but could not process the output file.",
+                    error: scriptError,
+                });
+            }
+        });
+
+    } catch (error) {
+        console.error("Error generating timetable:", error);
+        res.status(500).json({ message: "Server error during timetable generation." });
     }
-
-    // 5. Save the newly generated timetable to the database
-    const newTimetable = new Timetable({
-      term: termType,
-      batch: latestBatch._id,
-      timetableData: generatedTimetable,
-    });
-    await newTimetable.save();
-
-    res.status(201).json({ message: 'Timetable generated successfully!', timetable: newTimetable });
-
-  } catch (error) {
-    console.error("Error in generateTimetable:", error); // Log the full error to the console
-    res.status(500).json({ message: 'Error generating timetable', error: error.message });
-  }
 };
 
-module.exports = {
-  generateTimetable,
-};
+module.exports = { generateTimetable };

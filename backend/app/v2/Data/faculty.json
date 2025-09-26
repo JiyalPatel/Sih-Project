@@ -1,265 +1,265 @@
 [
-  {
-    "id": "F01",
-    "name": "Dr. A. Sharma",
-    "subjects": [
-      "S101",
-      "S301"
-    ],
-    "max_hours_per_week": 18,
-    "max_lab_hours": 8,
-    "max_lecture_hours": 14,
-    "preferred_days": [
-      "Mon",
-      "Tue",
-      "Wed",
-      "Thu",
-      "Fri"
-    ],
-    "preferred_slots": [
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6"
-    ]
-  },
-  {
-    "id": "F02",
-    "name": "Prof. B. Gupta",
-    "subjects": [
-      "S102",
-      "S501",
-      "S701"
-    ],
-    "max_hours_per_week": 16,
-    "max_lab_hours": 10,
-    "max_lecture_hours": 12,
-    "preferred_days": [
-      "Mon",
-      "Tue",
-      "Wed",
-      "Thu",
-      "Fri"
-    ],
-    "preferred_slots": [
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6"
-    ]
-  },
-  {
-    "id": "F03",
-    "name": "Dr. C. Iyer",
-    "subjects": [
-      "S103",
-      "S303"
-    ],
-    "max_hours_per_week": 16,
-    "max_lab_hours": 6,
-    "max_lecture_hours": 12,
-    "preferred_days": [
-      "Mon",
-      "Tue",
-      "Wed",
-      "Thu",
-      "Fri"
-    ],
-    "preferred_slots": [
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6"
-    ]
-  },
-  {
-    "id": "F04",
-    "name": "Dr. D. Mehta",
-    "subjects": [
-      "S104",
-      "S304",
-      "S704"
-    ],
-    "max_hours_per_week": 14,
-    "max_lab_hours": 6,
-    "max_lecture_hours": 12,
-    "preferred_days": [
-      "Mon",
-      "Tue",
-      "Wed",
-      "Thu",
-      "Fri"
-    ],
-    "preferred_slots": [
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6"
-    ]
-  },
-  {
-    "id": "F05",
-    "name": "Prof. E. Rao",
-    "subjects": [
-      "S302",
-      "S503"
-    ],
-    "max_hours_per_week": 18,
-    "max_lab_hours": 8,
-    "max_lecture_hours": 14,
-    "preferred_days": [
-      "Mon",
-      "Tue",
-      "Wed",
-      "Thu",
-      "Fri"
-    ],
-    "preferred_slots": [
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6"
-    ]
-  },
-  {
-    "id": "F06",
-    "name": "Dr. F. Khan",
-    "subjects": [
-      "S303",
-      "S501"
-    ],
-    "max_hours_per_week": 14,
-    "max_lab_hours": 8,
-    "max_lecture_hours": 10,
-    "preferred_days": [
-      "Mon",
-      "Tue",
-      "Wed",
-      "Thu",
-      "Fri"
-    ],
-    "preferred_slots": [
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6"
-    ]
-  },
-  {
-    "id": "F07",
-    "name": "Dr. G. Patel",
-    "subjects": [
-      "S504",
-      "S502"
-    ],
-    "max_hours_per_week": 16,
-    "max_lab_hours": 8,
-    "max_lecture_hours": 12,
-    "preferred_days": [
-      "Mon",
-      "Tue",
-      "Wed",
-      "Thu",
-      "Fri"
-    ],
-    "preferred_slots": [
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6"
-    ]
-  },
-  {
-    "id": "F08",
-    "name": "Prof. H. Singh",
-    "subjects": [
-      "S304",
-      "S701"
-    ],
-    "max_hours_per_week": 16,
-    "max_lab_hours": 8,
-    "max_lecture_hours": 12,
-    "preferred_days": [
-      "Mon",
-      "Tue",
-      "Wed",
-      "Thu",
-      "Fri"
-    ],
-    "preferred_slots": [
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6"
-    ]
-  },
-  {
-    "id": "F09",
-    "name": "Dr. I. Desai",
-    "subjects": [
-      "S502",
-      "S302"
-    ],
-    "max_hours_per_week": 14,
-    "max_lab_hours": 8,
-    "max_lecture_hours": 10,
-    "preferred_days": [
-      "Mon",
-      "Tue",
-      "Wed",
-      "Thu",
-      "Fri"
-    ],
-    "preferred_slots": [
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6"
-    ]
-  },
-  {
-    "id": "F10",
-    "name": "Dr. J. Roy",
-    "subjects": [
-      "S701",
-      "S702",
-      "S703"
-    ],
-    "max_hours_per_week": 12,
-    "max_lab_hours": 8,
-    "max_lecture_hours": 10,
-    "preferred_days": [
-      "Mon",
-      "Tue",
-      "Wed",
-      "Thu",
-      "Fri"
-    ],
-    "preferred_slots": [
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6"
-    ]
-  }
+    {
+        "id": "F01",
+        "name": "Dr. A. Sharma",
+        "subjects": [
+            "S101",
+            "S301"
+        ],
+        "max_hours_per_week": 18,
+        "max_lab_hours": 8,
+        "max_lecture_hours": 14,
+        "preferred_days": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri"
+        ],
+        "preferred_slots": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+        ]
+    },
+    {
+        "id": "F02",
+        "name": "Prof. B. Gupta",
+        "subjects": [
+            "S102",
+            "S501",
+            "S701"
+        ],
+        "max_hours_per_week": 16,
+        "max_lab_hours": 10,
+        "max_lecture_hours": 12,
+        "preferred_days": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri"
+        ],
+        "preferred_slots": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+        ]
+    },
+    {
+        "id": "F03",
+        "name": "Dr. C. Iyer",
+        "subjects": [
+            "S103",
+            "S303"
+        ],
+        "max_hours_per_week": 16,
+        "max_lab_hours": 6,
+        "max_lecture_hours": 12,
+        "preferred_days": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri"
+        ],
+        "preferred_slots": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+        ]
+    },
+    {
+        "id": "F04",
+        "name": "Dr. D. Mehta",
+        "subjects": [
+            "S104",
+            "S304",
+            "S704"
+        ],
+        "max_hours_per_week": 14,
+        "max_lab_hours": 6,
+        "max_lecture_hours": 12,
+        "preferred_days": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri"
+        ],
+        "preferred_slots": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+        ]
+    },
+    {
+        "id": "F05",
+        "name": "Prof. E. Rao",
+        "subjects": [
+            "S302",
+            "S503"
+        ],
+        "max_hours_per_week": 18,
+        "max_lab_hours": 8,
+        "max_lecture_hours": 14,
+        "preferred_days": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri"
+        ],
+        "preferred_slots": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+        ]
+    },
+    {
+        "id": "F06",
+        "name": "Dr. F. Khan",
+        "subjects": [
+            "S303",
+            "S501"
+        ],
+        "max_hours_per_week": 14,
+        "max_lab_hours": 8,
+        "max_lecture_hours": 10,
+        "preferred_days": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri"
+        ],
+        "preferred_slots": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+        ]
+    },
+    {
+        "id": "F07",
+        "name": "Dr. G. Patel",
+        "subjects": [
+            "S504",
+            "S502"
+        ],
+        "max_hours_per_week": 16,
+        "max_lab_hours": 8,
+        "max_lecture_hours": 12,
+        "preferred_days": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri"
+        ],
+        "preferred_slots": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+        ]
+    },
+    {
+        "id": "F08",
+        "name": "Prof. H. Singh",
+        "subjects": [
+            "S304",
+            "S701"
+        ],
+        "max_hours_per_week": 16,
+        "max_lab_hours": 8,
+        "max_lecture_hours": 12,
+        "preferred_days": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri"
+        ],
+        "preferred_slots": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+        ]
+    },
+    {
+        "id": "F09",
+        "name": "Dr. I. Desai",
+        "subjects": [
+            "S502",
+            "S302"
+        ],
+        "max_hours_per_week": 14,
+        "max_lab_hours": 8,
+        "max_lecture_hours": 10,
+        "preferred_days": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri"
+        ],
+        "preferred_slots": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+        ]
+    },
+    {
+        "id": "F10",
+        "name": "Dr. J. Roy",
+        "subjects": [
+            "S701",
+            "S702",
+            "S703"
+        ],
+        "max_hours_per_week": 12,
+        "max_lab_hours": 8,
+        "max_lecture_hours": 10,
+        "preferred_days": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri"
+        ],
+        "preferred_slots": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+        ]
+    }
 ]
