@@ -28,12 +28,13 @@ interface Timetable {
 
 interface Batch {
   _id: string;
+  name: string;
   semester: number;
 }
 
 const InstituteDashboard = () => {
   const { toast } = useToast();
-  const [stats, setStats] = useState({ departments: 0, faculty: 0, timetables: 0 });
+  const [stats, setStats] = useState({ departments: 0, faculty: 0});
   const [loadingStats, setLoadingStats] = useState(true);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [batches, setBatches] = useState<Batch[]>([]);
@@ -60,24 +61,22 @@ const InstituteDashboard = () => {
       setLoadingStats(true);
       try {
         // Fetch all data from the general endpoints as you requested
-        const [deptRes, facultyRes, timetableRes] = await Promise.all([
+        const [deptRes, facultyRes] = await Promise.all([
           api.get(`/departments`),
           api.get(`/faculties`), // CORRECTED: Using plural based on common convention and error logs.
-          api.get(`/timetables`),
+          // api.get(`/timetables`),
         ]);
 
-        console.log("Fetched Departments:", deptRes.data);
         
 
         // Filter each dataset on the client-side based on the institute's account ID
         const instituteDepartments = deptRes.data;
         const instituteFaculty = facultyRes.data;
-        const instituteTimetables = timetableRes.data;
+        // const instituteTimetables = timetableRes.data;
 
         setStats({
           departments: instituteDepartments.length,
           faculty: instituteFaculty.length,
-          timetables: instituteTimetables.length,
         });
         
         // Populate the dropdown with only the filtered departments that belong to this institute
@@ -103,7 +102,8 @@ const InstituteDashboard = () => {
     }
     const fetchBatches = async () => {
       try {
-        const res = await api.get(`/batches/department/${selectedDepartment}`);
+        const res = await api.get(`/batches`);
+        
         setBatches(res.data);
       } catch (error) {
         console.error("Failed to fetch batches:", error);
@@ -115,7 +115,7 @@ const InstituteDashboard = () => {
   const statCards = [
     { title: "Total Departments", value: stats.departments, icon: ClipboardList, color: "text-purple-500", bgColor: "bg-purple-100" },
     { title: "Total Faculty", value: stats.faculty, icon: UserSquare, color: "text-red-500", bgColor: "bg-red-100" },
-    { title: "Active Timetables", value: stats.timetables, icon: CalendarCheck, color: "text-yellow-500", bgColor: "bg-yellow-100" },
+    // { title: "Active Timetables", value: stats.timetables, icon: CalendarCheck, color: "text-yellow-500", bgColor: "bg-yellow-100" },
   ];
 
   return (
@@ -165,11 +165,11 @@ const InstituteDashboard = () => {
             </Select>
           </div>
           <div className="flex-1 w-full">
-            <Label className="block text-sm font-medium mb-1 text-sidebar-foreground/70">Semester</Label>
+            <Label className="block text-sm font-medium mb-1 text-sidebar-foreground/70">Batch</Label>
             <Select onValueChange={setSelectedBatch} value={selectedBatch} disabled={!selectedDepartment}>
               <SelectTrigger><SelectValue placeholder="Select Semester" /></SelectTrigger>
               <SelectContent>
-                {batches.map(batch => <SelectItem key={batch._id} value={batch._id}>{`Semester ${batch.semester}`}</SelectItem>)}
+                {batches.map(batch => <SelectItem key={batch._id} value={batch._id}>{`Semester ${batch?.name}`}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>

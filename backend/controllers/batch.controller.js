@@ -4,9 +4,9 @@ const Batch = require("../models/batch.model");
 // ---------- Get all batches ----------
 exports.getBatches = async (req, res) => {
   try {
-    const batches = await Batch.find()
-      .populate("department", "name")
-      .populate("subjects", "name code"); // populate subject details
+    const batches = await Batch.find({})
+      // .populate("department", "name")
+      // .populate("subjects", "name code"); // populate subject details
     res.json(batches);
   } catch (err) {
     res.status(500).json({ msg: err.message || "Failed to fetch batches" });
